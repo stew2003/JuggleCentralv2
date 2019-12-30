@@ -29,14 +29,18 @@ const editUser = Joi.object()
   })
   .required()
 
-const setAdmin = Joi.object().keys({
-  uid: global.idSchema,
-  isAdmin
-})
+const setAdmin = Joi.object()
+  .keys({
+    uid: global.idSchema,
+    isAdmin
+  })
+  .required()
 
-const deleteUser = Joi.object().keys({
-  uid: global.idSchema
-})
+const deleteUser = Joi.object()
+  .keys({
+    uid: global.idSchema
+  })
+  .required()
 
 module.exports = {
   newUser,

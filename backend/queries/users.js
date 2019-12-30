@@ -76,7 +76,7 @@ module.exports = {
   // delete a user and change rankings accordingly
   delete: async ({ uid }) => {
     try {
-      await pool.query('DELETE FROM FROM users WHERE uid = ?;', [uid])
+      await pool.query('DELETE FROM users WHERE uid = ?;', [uid])
       return
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
