@@ -13,7 +13,7 @@ module.exports = {
     // add your custom rules here
     rules: {
       'prettier/prettier': ['error'],
-      "no-console": "off"
+      "no-console": "off",
+      "no-plusplus": "off"
     }
   }
-  

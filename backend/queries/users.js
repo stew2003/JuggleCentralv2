@@ -160,5 +160,40 @@ module.exports = {
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
+  },
+
+  // convert existing user scores into user ranks for all users
+  updateGlobalRanks: async () => {
+    try {
+      /*	This gets all the possible scores (no duplicates) from the users table, ordered highest to lowest. We simply need to rank them and
+			then UPDATE to add that same rank to any users who share that score. */
+      const scores = await pool.query(
+        'SELECT score FROM users GROUP BY score ORDER BY score DESC;'
+      )
+      const args = []
+      let query = ''
+
+      // give each score a rank
+      for (let i = 0; i < scores.length; i += 1) {
+        args.push(scores[i].score, i + 1)
+        query += ' WHEN score = ? THEN ?'
+      }
+
+      // if there is something to update
+      if (query) {
+        // update the user ranks accordingly, giving each user the rank that corresponds with their score
+        await pool.query(
+          `UPDATE users SET userRank = CASE${query} ELSE userRank END;`,
+          args
+        )
+      }
+
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
   }
+
+  /*	Calculate the record scores for all PB records within a given subset of patterns,
+		and update the local rank of each record */
 }
