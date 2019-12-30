@@ -15,6 +15,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+      - ./database/insert_db.sql:/docker-entrypoint-initdb.d/insert_db.sql
 
   api:
     container_name: api
