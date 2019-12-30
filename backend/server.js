@@ -3,10 +3,17 @@ const cors = require('cors')
 
 const app = express()
 
+const userRoutes = require('./routes/users')
+
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('Hello')
+app.use('/', userRoutes)
+
+// create an error middleware!
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error(err)
+  res.status(err.status).send({ error: err, message: err.message })
 })
 
 app.listen(process.env.PORT, process.env.HOST, () => {

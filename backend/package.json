@@ -20,7 +20,10 @@
     "prettier": "^1.18.2"
   },
   "dependencies": {
+    "@hapi/joi": "^16.1.8",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "http-status-codes": "^1.4.0",
+    "mysql2": "^2.1.0"
   }
 }
