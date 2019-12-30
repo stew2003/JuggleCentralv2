@@ -1,0 +1,11 @@
+{
+    "eslint.alwaysShowStatus": true,
+    "git.ignoreLimitWarning": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
+    "eslint.workingDirectories": [
+      "frontend",
+      "backend"
+    ]
+}

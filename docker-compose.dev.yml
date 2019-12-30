@@ -1,0 +1,70 @@
+version: "3.3"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_USER: ${MYSQL_DEV_USER}
+      MYSQL_PASSWORD: ${MYSQL_DEV_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DEV_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DEV_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+
+  api:
+    container_name: api
+    depends_on:
+      - mysql
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-dev
+    environment:
+      NODE_ENV: development
+      MYSQL_USER: ${MYSQL_DEV_USER}
+      MYSQL_PASSWORD: ${MYSQL_DEV_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DEV_DATABASE}
+      MYSQL_HOST_IP: mysql
+      PORT: 8080
+      HOST: 0.0.0.0
+    expose:
+      - 8080
+    volumes:
+      - ./backend:/app
+    command: npm run dev
+
+  frontend:
+    container_name: frontend
+    depends_on:
+      - api
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile-dev
+    environment:
+      NUXT_PORT: 3000
+      NUXT_HOST: 0.0.0.0
+      NODE_ENV: development
+    expose:
+      - 3000
+    volumes:
+      - ./frontend:/app
+    command: npm run dev
+
+  ngnix:
+    container_name: nginx
+    image: nginx:latest
+    depends_on:
+      - api
+      - frontend
+    restart: always
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+       - 80:80
+
+volumes:
+  mysql_data:
