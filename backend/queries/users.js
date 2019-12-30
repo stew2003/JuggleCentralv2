@@ -81,5 +81,15 @@ module.exports = {
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
+  },
+
+  // get all of the users
+  getAll: async () => {
+    try {
+      const users = await pool.query('SELECT * FROM users;')
+      return users
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
   }
 }

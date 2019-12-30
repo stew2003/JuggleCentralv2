@@ -63,4 +63,14 @@ router.delete(
   }
 )
 
+// handle request to get all users
+router.get('/users', async (req, res, next) => {
+  try {
+    const users = await usersController.getAll()
+    res.send(users)
+  } catch (err) {
+    next(err)
+  }
+})
+
 module.exports = router
