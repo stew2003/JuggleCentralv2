@@ -13,8 +13,7 @@ router.post(
   validate('body', schemas.newUser),
   async (req, res, next) => {
     try {
-      const newUser = await usersController.new(req.body)
-      res.send(newUser)
+      res.send(await usersController.new(req.body))
     } catch (err) {
       next(err)
     }
@@ -66,8 +65,7 @@ router.delete(
 // handle request to get all users
 router.get('/users', async (req, res, next) => {
   try {
-    const users = await usersController.getAll()
-    res.send(users)
+    res.send(await usersController.getAll())
   } catch (err) {
     next(err)
   }

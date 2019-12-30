@@ -87,8 +87,7 @@ module.exports = {
   // get all of the users
   getAll: async () => {
     try {
-      const users = await pool.query('SELECT * FROM users;')
-      return users
+      return await pool.query('SELECT * FROM users;')
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -193,7 +192,4 @@ module.exports = {
       throw new Errors.InternalServerError(err.message)
     }
   }
-
-  /*	Calculate the record scores for all PB records within a given subset of patterns,
-		and update the local rank of each record */
 }

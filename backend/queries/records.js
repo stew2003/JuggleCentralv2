@@ -93,7 +93,8 @@ module.exports = {
           }
         }
 
-        // move i to 1 before the last record we were looking at (so that when the loop increments i, we will be at the start of a new pattern)
+        // move i to 1 before the last record we were looking at
+        // (so that when the loop increments i, we will be at the start of a new pattern)
         i = j - 1
       }
 
