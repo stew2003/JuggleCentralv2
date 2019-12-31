@@ -85,9 +85,32 @@ module.exports = {
   },
 
   // get all of the users
-  getAll: async () => {
+  getAll: async (uid = false) => {
     try {
-      return await pool.query('SELECT * FROM users;')
+      const users = await pool.query('SELECT * FROM users;')
+      if (uid) {
+        return users.map((user) => user.uid)
+      }
+      return users
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // get who was associated with patternUIDs
+  getByPatterns: async (patternUIDs) => {
+    try {
+      // no users are affected by no patterns
+      if (!(patternUIDs && patternUIDs.length > 0)) {
+        return []
+      }
+
+      const records = await pool.query(
+        `SELECT userUID FROM records WHERE patternUID IN (?) GROUP BY userUID;`,
+        [patternUIDs]
+      )
+      // return an array of user uids
+      return records.map((r) => r.userUID)
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -96,7 +119,7 @@ module.exports = {
   // calculate global user scores on a subset of users, or all users if no subset specified
   calcScores: async (uids) => {
     try {
-      // if there arent any uids throw an error
+      // if no users are passed in, do nothing
       if (!(uids && uids.length > 0)) {
         throw new Error('Cannot calcualte scores for no users')
       }
@@ -162,7 +185,7 @@ module.exports = {
   },
 
   // convert existing user scores into user ranks for all users
-  updateGlobalRanks: async () => {
+  updateRanks: async () => {
     try {
       /*	This gets all the possible scores (no duplicates) from the users table, ordered highest to lowest. We simply need to rank them and
 			then UPDATE to add that same rank to any users who share that score. */
@@ -186,6 +209,101 @@ module.exports = {
           args
         )
       }
+
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  /*	Redetermine the isPersonalBest flag for a given user competing in a given subset of patterns.
+		Operates on both catch- and time-based records.
+		If no subset given, it will update personal bests for all patterns in which the user competes */
+  maintainPBs: async (userUID, patternUIDs) => {
+    try {
+      // default all records under this user & pattern to NOT the PB
+      await pool.query(
+        'UPDATE records SET isPersonalBest = 0 WHERE userUID = ? AND patternUID IN (?);',
+        [userUID, patternUIDs]
+      )
+
+      const records = await pool.query(
+        `
+        SELECT * FROM records JOIN
+          (SELECT
+            userUID,
+            patternUID,
+            duration IS NOT NULL AS isTimeBased,
+            catches IS NOT NULL AS isCatchBased,
+            MAX(duration) AS maxDuration,
+            MAX(catches) AS maxCatches
+          FROM records
+          WHERE
+            userUID = ?
+            AND patternUID IN (?)
+          GROUP BY
+            isTimeBased,
+            isCatchBased,
+            patternUID)
+          AS pbs
+        ON
+          (
+            records.duration = pbs.maxDuration
+            OR records.catches = pbs.maxCatches
+          )
+          AND records.patternUID = pbs.patternUID
+        WHERE
+          records.userUID = ?
+          AND records.patternUID IN (?)
+        ORDER BY records.timeRecorded ASC;
+        `,
+        [userUID, patternUIDs, userUID, patternUIDs]
+      )
+
+      // if there are no records to flag as personal best justs return
+      if (records.length === 0) {
+        return
+      }
+
+      // association of pattern UID to its time and catch PB's for this user
+      const patternToPBs = {}
+
+      /*	Get each pattern's time and catch personal bests from the query result
+        This will overwrite with each progressive row, so if duplicate PBs exist for a given pattern / category,
+        the most recent record will be the only one marked with isPersonalBest = 1 (result is already ordered by timeRecorded) */
+      for (let i = 0; i < records.length; i++) {
+        const pUID = records[i].patternUID
+
+        // if no existing object for this pattern, initialize
+        if (!patternToPBs[pUID]) {
+          patternToPBs[pUID] = {}
+        }
+
+        if (records[i].isTimeBased === 1) {
+          // store record UID as time PB for this pattern
+          patternToPBs[pUID].timePBuid = records[i].uid
+        } else {
+          // store record UID as catch PB for this pattern
+          patternToPBs[pUID].catchPBuid = records[i].uid
+        }
+      }
+
+      // array to hold UIDs of all records that will be made PBs
+      const uids = []
+
+      // for each pattern
+      Object.keys(patternToPBs).forEach((pUID) => {
+        const PBs = patternToPBs[pUID]
+
+        // if PBs exist, add their record UIDs to update query arguments
+        if (PBs.catchPBuid) uids.push(PBs.catchPBuid)
+        if (PBs.timePBuid) uids.push(PBs.timePBuid)
+      })
+
+      await pool.query(
+        'UPDATE records SET isPersonalBest = 1 WHERE uid IN (?);',
+        [uids]
+      )
 
       return
     } catch (err) {

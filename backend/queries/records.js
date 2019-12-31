@@ -1,6 +1,6 @@
 const pool = require('./connection')
 const Errors = require('../utils/errors')
-const sys = require('../utils/settings')
+const userController = require('./users')
 
 module.exports = {
   /*	Calculate the record scores for all PB records within a given subset of patterns,
@@ -106,6 +106,29 @@ module.exports = {
         `UPDATE records SET score = CASE${scoreQuery} ELSE score END, recordRank = CASE${rankQuery} ELSE recordRank END;`,
         args
       )
+
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // used to handle a new / edited / removed record by updating scores & ranks as needed
+  handleChange: async (userUID, affectedPatterns) => {
+    try {
+      if (!userUID) {
+        throw new Error('Some user must be affected by this record')
+      }
+
+      if (!(affectedPatterns && affectedPatterns.length > 0)) {
+        throw new Error('Some patterns must be affected by this record')
+      }
+
+      // maintain the personal bests in patterns affected by this record (usually just one, possibly two with an edit and pattern change (old and new))
+      await userController.maintainPBs(userUID, affectedPatterns)
+
+      // maintain all pattern data in those affected by this change in record
+      await module.exports.maintainPatternInfo(affectedPatterns)
 
       return
     } catch (err) {
