@@ -1,6 +1,7 @@
 const pool = require('./connection')
 const Errors = require('../utils/errors')
 const sys = require('../utils/settings')
+const patternController = require('./patterns')
 
 module.exports = {
   // create a new administrator
@@ -73,11 +74,21 @@ module.exports = {
     }
   },
 
-  // TODO ADD RANKING!!!!!!
   // delete a user and change rankings accordingly
   delete: async ({ uid }) => {
     try {
+      // get all patterns affected by this users deletion
+      const affectedPatterns = await patternController.getByUsers([uid])
+
+      // actually remove the user and associated records from db
       await pool.query('DELETE FROM users WHERE uid = ?;', [uid])
+
+      // if any patterns are affected
+      if (affectedPatterns.length > 0) {
+        // update their cached info accordingly
+        await patternController.maintainInfo(affectedPatterns)
+      }
+
       return
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
