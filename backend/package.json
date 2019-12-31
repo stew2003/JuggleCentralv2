@@ -4,11 +4,13 @@
   "description": "Nodejs api for JuggleCentralv2",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "testData": "node testData.js"
   },
   "author": "Thomas Castleman and Stewart Morris",
   "license": "MIT",
   "devDependencies": {
+    "casual": "^1.6.2",
     "eslint": "^5.3.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",
@@ -16,6 +18,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
+    "moment": "^2.24.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2"
   },
