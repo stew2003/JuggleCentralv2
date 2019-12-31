@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "testData": "node testData.js"
+    "test": "cd .. && docker-compose -f docker-compose.dev.yml exec api node testData.js"
   },
   "author": "Thomas Castleman and Stewart Morris",
   "license": "MIT",
