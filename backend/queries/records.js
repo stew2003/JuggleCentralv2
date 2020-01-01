@@ -3,6 +3,96 @@ const Errors = require('../utils/errors')
 const userController = require('./users')
 
 module.exports = {
+  // get all of the records
+  getAll: async (uid = false) => {
+    try {
+      const records = await pool.query('SELECT * FROM records;')
+      if (uid) {
+        return records.map((r) => r.uid)
+      }
+      return records
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // add a new record
+  new: async (userUID, patternUID, catches, duration, video) => {
+    try {
+      // add the new record to db
+      await pool.query(
+        'INSERT INTO records (userUID, patternUID, catches, duration, video, timeRecorded) VALUES (?, ?, ?, ?, ?, NOW());',
+        [userUID, patternUID, catches, duration, video]
+      )
+
+      // handle the change in records
+      module.exports.handleChange(userUID, [patternUID])
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // edit the fields of an existing record
+  edit: async (uid, patternUID, catches, duration, video) => {
+    try {
+      // get both the user UID and the pattern UID BEFORE the edits are applied
+      const UIDs = await pool.query(
+        'SELECT userUID, patternUID FROM records WHERE uid = ?;',
+        [uid]
+      )
+
+      if (UIDs.length === 0) {
+        throw new Error('Cannot identify the pattern you requested to edit')
+      }
+
+      const { userUID, patternUID: oldPatternUID } = UIDs
+      let affectedPatterns
+
+      // if pattern changed
+      if (oldPatternUID !== patternUID) {
+        // both old and new pattern are affected
+        affectedPatterns = [oldPatternUID, patternUID]
+      } else {
+        // only one pattern is affected
+        affectedPatterns = [patternUID]
+      }
+
+      // apply the record update
+      await pool.query(
+        'UPDATE records SET patternUID = ?, catches = ?, duration = ?, video = ? WHERE uid = ?;',
+        [patternUID, catches, duration, video, uid]
+      )
+
+      // handle the change in records
+      module.exports.handleChange(userUID, affectedPatterns)
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // remove a record
+  delete: async (uid) => {
+    try {
+      const UIDs = await pool.query(
+        'SELECT userUID, patternUID FROM records WHERE uid = ?;',
+        [uid]
+      )
+
+      if (UIDs.length === 0) {
+        throw new Error('Cannot identify the pattern you requested to edit')
+      }
+
+      const { userUID, patternUID } = UIDs
+
+      await pool.query('DELETE FROM records WHERE uid = ?;', [uid])
+
+      // handle the change in records
+      module.exports.handleChange(userUID, [patternUID])
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   /*	Calculate the record scores for all PB records within a given subset of patterns,
     and update the local rank of each record */
   updateScoresAndRanks: async (patternUIDs) => {
