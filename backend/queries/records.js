@@ -33,6 +33,22 @@ module.exports = {
     }
   },
 
+  // TODO
+  /*	Get all the records of a given user.
+		Will JOIN to get pattern name. ORDER BY patternUID, catches, duration.
+		Splits into array of pattern objects with uid, name, and all catch and time records for this user */
+  getRecordsByUser: async (userUID) => {},
+
+  // TODO
+  /*	Get all records for a specific pattern by UID. JOINs on user name. ORDER BY catches, duration;
+		This should both split the records into two “sections” and sort them properly in each category.
+		Splits into catch-based and time-based records, returns object with both arrays. */
+  getRecordsByPattern: async (patternUID) => {},
+
+  // TODO
+  // get recently set records which are personal bests
+  getRecentPersonalBests: async (limit) => {},
+
   // add a new record
   new: async (userUID, patternUID, catches, duration, video) => {
     try {

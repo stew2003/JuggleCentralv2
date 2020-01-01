@@ -54,6 +54,14 @@ module.exports = {
     }
   },
 
+  // TODO
+  // Get recently created patterns.
+  getRecentNewPatterns: async (limit) => {},
+
+  // TODO
+  // get all possible numbers of objects of existing patterns
+  getPossibleNumObjects: async () => {},
+
   // create a new pattern
   new: async ({ name, description, numObjects, gif }) => {
     try {
@@ -402,7 +410,8 @@ module.exports = {
     }
   },
 
-  // handle a change in pattern difficulty for a subset of patterns, updating users scores / rankings accordingly
+  /*  handle a change in pattern difficulty for a subset of patterns,
+      updating users scores / rankings accordingly */
   handleDifficultyChange: async (affectedPatterns, affectedUsers) => {
     try {
       if (!(affectedPatterns && affectedPatterns.length > 0)) {

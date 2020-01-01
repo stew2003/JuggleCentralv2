@@ -51,6 +51,18 @@ module.exports = {
     }
   },
 
+  // TODO
+  // get the UID of a user from a given record
+  getUserByRecord: async (uid) => {},
+
+  // TODO
+  // get all users, ordered by rank
+  getGlobalLeaderboard: async () => {},
+
+  // TODO
+  // get recently created user accounts
+  getRecentNewUsers: async (limit) => {},
+
   // create a new administrator
   new: async ({ name, email, isAdmin }) => {
     try {
