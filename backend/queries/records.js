@@ -4,7 +4,17 @@ const userController = require('./users')
 
 module.exports = {
   // get all of the records
-  getAll: async (uid = false) => {},
+  getAll: async (uid = false) => {
+    try {
+      const records = await pool.query('SELECT * FROM records;')
+      if (uid) {
+        return records.map((r) => r.uid)
+      }
+      return records
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
   // add a new record
   new: async (userUID, patternUID, catches, duration, video) => {
