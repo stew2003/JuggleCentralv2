@@ -1,6 +1,5 @@
+/* eslint-disable no-use-before-define */
 const pool = require('./connection')
-const usersController = require('./users')
-const recordsController = require('./records')
 const Errors = require('../utils/errors')
 
 module.exports = {
@@ -54,11 +53,11 @@ module.exports = {
     }
   },
 
-  // TODO
+  // TODO:
   // Get recently created patterns.
   getRecentNewPatterns: async (limit) => {},
 
-  // TODO
+  // TODO:
   // get all possible numbers of objects of existing patterns
   getPossibleNumObjects: async () => {},
 
@@ -498,3 +497,7 @@ module.exports = {
     }
   }
 }
+
+// require cyclial modules after module.exports
+const usersController = require('./users')
+const recordsController = require('./records')

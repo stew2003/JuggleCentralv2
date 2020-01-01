@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 const pool = require('./connection')
 const Errors = require('../utils/errors')
 const sys = require('../utils/settings')
@@ -50,17 +51,17 @@ module.exports = {
     }
   },
 
-  // TODO
+  // TODO:
   // get the UID of a user from a given record
-  getUserByRecord: async (uid) => {},
+  getByRecord: async (uid) => {},
 
-  // TODO
+  // TODO:
   // get all users, ordered by rank
-  getGlobalLeaderboard: async () => {},
+  getLeaderboard: async () => {},
 
-  // TODO
+  // TODO:
   // get recently created user accounts
-  getRecentNewUsers: async (limit) => {},
+  getRecent: async (limit) => {},
 
   // create a new administrator
   new: async ({ name, email, isAdmin }) => {
@@ -349,4 +350,5 @@ module.exports = {
   }
 }
 
+// require cyclial modules after module.exports
 const patternController = require('./patterns')

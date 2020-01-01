@@ -1,6 +1,7 @@
+/* eslint-disable no-use-before-define */
+const moment = require('moment')
 const pool = require('./connection')
 const Errors = require('../utils/errors')
-const userController = require('./users')
 
 module.exports = {
   // get one of the records
@@ -33,24 +34,134 @@ module.exports = {
     }
   },
 
-  // TODO
   /*	Get all the records of a given user.
 		Will JOIN to get pattern name. ORDER BY patternUID, catches, duration.
 		Splits into array of pattern objects with uid, name, and all catch and time records for this user */
-  getRecordsByUser: async (userUID) => {},
+  getByUser: async (userUID) => {
+    try {
+      // if there is no userUID given, throw an error
+      if (!userUID) {
+        throw new Error('Cannot get records for a user when no users are given')
+      }
 
-  // TODO
+      const records = await pool.query(
+        'SELECT r.*, p.name AS patternName FROM records r JOIN patterns p ON r.patternUID = p.uid WHERE r.userUID = ? ORDER BY r.patternUID, r.duration DESC, r.catches DESC;',
+        [userUID]
+      )
+
+      // if there are no records just return an empty array
+      if (records.length === 0) {
+        return []
+      }
+
+      const patterns = []
+      const idToPattern = {}
+
+      // for each record
+      for (let i = 0; i < records.length; i++) {
+        const r = records[i]
+
+        // convert date into human-readable format
+        r.date = moment(r.timeRecorded)
+        if (r.date) r.date = r.date.format('M/D/YYYY [at] h:mm A')
+
+        // if no existing object for this record's pattern
+        if (!idToPattern[r.patternUID]) {
+          // create new object to manage data for this pattern
+          idToPattern[r.patternUID] = {
+            uid: r.patternUID,
+            name: r.patternName,
+            catchRecords: [],
+            timeRecords: []
+          }
+        }
+
+        // insert into the appropriate array of records within pattern object
+        if (r.catches != null) {
+          idToPattern[r.patternUID].catchRecords.push(r)
+          idToPattern[r.patternUID].catchRecordsExist = true
+        } else {
+          idToPattern[r.patternUID].timeRecords.push(r)
+          idToPattern[r.patternUID].timeRecordsExist = true
+        }
+      }
+
+      // add all pattern objects into one array
+      Object.keys(idToPattern).forEach((patternUID) => {
+        patterns.push(idToPattern[patternUID])
+      })
+
+      return patterns
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   /*	Get all records for a specific pattern by UID. JOINs on user name. ORDER BY catches, duration;
 		This should both split the records into two “sections” and sort them properly in each category.
 		Splits into catch-based and time-based records, returns object with both arrays. */
-  getRecordsByPattern: async (patternUID) => {},
+  getByPattern: async (patternUID) => {
+    try {
+      // if there is no userUID given, throw an error
+      if (!patternUID) {
+        throw new Error(
+          'Cannot get records for a pattern when no pattern is given'
+        )
+      }
 
-  // TODO
+      const records = await pool.query(
+        'SELECT r.*, u.name AS userName, u.userRank FROM records r JOIN users u ON r.userUID = u.uid WHERE r.patternUID = ? ORDER BY r.catches DESC, r.duration DESC;',
+        [patternUID]
+      )
+
+      // object to store records for this pattern
+      const recordsObj = {
+        catchRecords: [],
+        timeRecords: []
+      }
+
+      // for each record associated with this pattern
+      for (let i = 0; i < records.length; i++) {
+        // convert date into human-readable format
+        records[i].date = moment(records[i].timeRecorded)
+        if (records[i].date) {
+          records[i].date = records[i].date.format('M/D/YYYY [at] h:mm A')
+        }
+
+        // if this record uses catches
+        if (records[i].catches !== undefined) {
+          // add it to the catches part of the split records
+          recordsObj.catchRecords.push(records[i])
+        } else {
+          // add the duration to the duration part of the split records
+          recordsObj.timeRecords.push(records[i])
+        }
+      }
+
+      return recordsObj
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get recently set records which are personal bests
-  getRecentPersonalBests: async (limit) => {},
+  getRecentPersonalBests: async (limit) => {
+    try {
+      if (!(limit && limit > 0)) {
+        throw new Error('Cannot get recent personal bests with no limit')
+      }
+      // select only personal bests from records, joining to get user and pattern name, limiting size of response
+      return await pool.query(
+        'SELECT r.*, r.timeRecorded AS timeCreated, u.name AS userName, p.name AS patternName, 1 = 1 AS isPBActivity FROM records r JOIN users u ON r.userUID = u.uid JOIN patterns p ON r.patternUID = p.uid WHERE r.isPersonalBest = 1 ORDER BY uid DESC LIMIT ?;',
+        [limit]
+      )
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
   // add a new record
-  new: async (userUID, patternUID, catches, duration, video) => {
+  new: async ({ userUID, patternUID, catches, duration, video }) => {
     try {
       // add the new record to db
       await pool.query(
@@ -66,7 +177,7 @@ module.exports = {
   },
 
   // edit the fields of an existing record
-  edit: async (uid, patternUID, catches, duration, video) => {
+  edit: async ({ uid, patternUID, catches, duration, video }) => {
     try {
       // get both the user UID and the pattern UID BEFORE the edits are applied
       const UIDs = await pool.query(
@@ -104,7 +215,7 @@ module.exports = {
   },
 
   // remove a record
-  delete: async (uid) => {
+  delete: async ({ uid }) => {
     try {
       const UIDs = await pool.query(
         'SELECT userUID, patternUID FROM records WHERE uid = ?;',
@@ -259,3 +370,6 @@ module.exports = {
     }
   }
 }
+
+// require cyclial modules after module.exports
+const userController = require('./users')
