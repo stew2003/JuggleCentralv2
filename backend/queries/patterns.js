@@ -103,22 +103,52 @@ module.exports = {
     }
   },
 
-  // TODO: Ask Thomas about deleting records too
   // deletes an existing pattern and all associated records
   delete: async ({ uid }) => {
     try {
       // get users whose scores are affected by this pattern (relies on records, so we have to query this before deleting the pattern)
       const affectedUsers = await userController.getByPatterns([uid])
 
+      // get current max averages
+      const {
+        maxAvgCatch: oldMaxAvgCatch,
+        maxAvgTime: oldMaxAvgTime
+      } = await module.exports.getMaxAvgHighScores()
+
       // remove pattern from patterns table & delete all associated records
       await pool.query('DELETE FROM patterns WHERE uid = ?;', [uid])
 
-      // if no users were affected by this pattern then end the function
-      if (affectedUsers.length === 0) {
+      // get NEW max averages after update
+      const {
+        maxAvgCatch: newMaxAvgCatch,
+        maxAvgTime: newMaxAvgTime
+      } = await module.exports.getMaxAvgHighScores()
+
+      let usersToUpdate
+
+      // if max averages changed
+      if (
+        newMaxAvgCatch !== oldMaxAvgCatch ||
+        newMaxAvgTime !== oldMaxAvgTime
+      ) {
+        const patternsToUpdate = await module.exports.getAll(true) // update ALL patterns
+        usersToUpdate = await userController.getAll(true) // update ALL users
+
+        // update pattern difficulties appropriately & handle ripple effect
+        await module.exports.handleDifficultyChange(
+          patternsToUpdate,
+          usersToUpdate
+        )
+      } else {
+        usersToUpdate = affectedUsers
+      }
+
+      // if no users were affected then end the function
+      if (usersToUpdate.length === 0) {
         return
       }
 
-      await userController.calcScores(affectedUsers)
+      await userController.calcScores(usersToUpdate)
       await userController.updateRanks()
 
       return
