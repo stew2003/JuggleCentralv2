@@ -4,6 +4,24 @@ const recordsController = require('./records')
 const Errors = require('../utils/errors')
 
 module.exports = {
+  // get one of the patterns
+  get: async ({ uid }) => {
+    try {
+      const pattern = await pool.query(
+        'SELECT * FROM patterns WHERE uid = ?;',
+        [uid]
+      )
+
+      if (pattern.length === 0) {
+        throw new Error(`There is no pattern with uid - ${uid}`)
+      }
+
+      return pattern
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all of the patterns
   getAll: async (uid = false) => {
     try {

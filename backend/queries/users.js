@@ -4,6 +4,21 @@ const sys = require('../utils/settings')
 const patternController = require('./patterns')
 
 module.exports = {
+  // get one of the users
+  get: async ({ uid }) => {
+    try {
+      const user = await pool.query('SELECT * FROM users WHERE uid = ?;', [uid])
+
+      if (user.length === 0) {
+        throw new Error(`There is no user with uid - ${uid}`)
+      }
+
+      return user
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all of the users
   getAll: async (uid = false) => {
     try {
