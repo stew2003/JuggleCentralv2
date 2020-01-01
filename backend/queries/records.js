@@ -3,6 +3,23 @@ const Errors = require('../utils/errors')
 const userController = require('./users')
 
 module.exports = {
+  // get one of the records
+  get: async ({ uid }) => {
+    try {
+      const records = await pool.query('SELECT * FROM records WHERE uid = ?;', [
+        uid
+      ])
+
+      if (records.length === 0) {
+        throw new Error(`There is no record with uid - ${uid}`)
+      }
+
+      return records[0]
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all of the records
   getAll: async (uid = false) => {
     try {
@@ -15,6 +32,22 @@ module.exports = {
       throw new Errors.InternalServerError(err.message)
     }
   },
+
+  // TODO
+  /*	Get all the records of a given user.
+		Will JOIN to get pattern name. ORDER BY patternUID, catches, duration.
+		Splits into array of pattern objects with uid, name, and all catch and time records for this user */
+  getRecordsByUser: async (userUID) => {},
+
+  // TODO
+  /*	Get all records for a specific pattern by UID. JOINs on user name. ORDER BY catches, duration;
+		This should both split the records into two “sections” and sort them properly in each category.
+		Splits into catch-based and time-based records, returns object with both arrays. */
+  getRecordsByPattern: async (patternUID) => {},
+
+  // TODO
+  // get recently set records which are personal bests
+  getRecentPersonalBests: async (limit) => {},
 
   // add a new record
   new: async (userUID, patternUID, catches, duration, video) => {

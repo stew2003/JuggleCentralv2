@@ -16,7 +16,7 @@ module.exports = {
         throw new Error(`There is no pattern with uid - ${uid}`)
       }
 
-      return pattern
+      return pattern[0]
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -53,6 +53,14 @@ module.exports = {
       throw new Errors.InternalServerError(err.message)
     }
   },
+
+  // TODO
+  // Get recently created patterns.
+  getRecentNewPatterns: async (limit) => {},
+
+  // TODO
+  // get all possible numbers of objects of existing patterns
+  getPossibleNumObjects: async () => {},
 
   // create a new pattern
   new: async ({ name, description, numObjects, gif }) => {
@@ -404,7 +412,8 @@ module.exports = {
     }
   },
 
-  // handle a change in pattern difficulty for a subset of patterns, updating users scores / rankings accordingly
+  /*  handle a change in pattern difficulty for a subset of patterns,
+      updating users scores / rankings accordingly */
   handleDifficultyChange: async (affectedPatterns, affectedUsers) => {
     try {
       if (!(affectedPatterns && affectedPatterns.length > 0)) {

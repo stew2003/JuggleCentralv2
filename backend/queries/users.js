@@ -12,7 +12,7 @@ module.exports = {
         throw new Error(`There is no user with uid - ${uid}`)
       }
 
-      return user
+      return user[0]
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -49,6 +49,18 @@ module.exports = {
       throw new Errors.InternalServerError(err.message)
     }
   },
+
+  // TODO
+  // get the UID of a user from a given record
+  getUserByRecord: async (uid) => {},
+
+  // TODO
+  // get all users, ordered by rank
+  getGlobalLeaderboard: async () => {},
+
+  // TODO
+  // get recently created user accounts
+  getRecentNewUsers: async (limit) => {},
 
   // create a new administrator
   new: async ({ name, email, isAdmin }) => {
