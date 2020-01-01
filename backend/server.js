@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const app = express()
 
 const userRoutes = require('./routes/users')
+const patternRoutes = require('./routes/patterns')
 
 app.use(cors())
 
@@ -13,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 app.use('/', userRoutes)
+app.use('/', patternRoutes)
 
 // create an error middleware!
 // eslint-disable-next-line no-unused-vars

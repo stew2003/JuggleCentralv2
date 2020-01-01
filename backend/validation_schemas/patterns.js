@@ -17,6 +17,7 @@ module.exports = {
         .min(1)
         .required(),
       gif: Joi.string()
+        .allow('')
         .uri()
         .required()
     })
