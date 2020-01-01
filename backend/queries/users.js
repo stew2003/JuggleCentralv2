@@ -4,6 +4,38 @@ const sys = require('../utils/settings')
 const patternController = require('./patterns')
 
 module.exports = {
+  // get all of the users
+  getAll: async (uid = false) => {
+    try {
+      const users = await pool.query('SELECT * FROM users;')
+      if (uid) {
+        return users.map((user) => user.uid)
+      }
+      return users
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // get who was associated with patternUIDs
+  getByPatterns: async (patternUIDs) => {
+    try {
+      // no users are affected by no patterns
+      if (!(patternUIDs && patternUIDs.length > 0)) {
+        return []
+      }
+
+      const records = await pool.query(
+        `SELECT userUID FROM records WHERE patternUID IN (?) GROUP BY userUID;`,
+        [patternUIDs]
+      )
+      // return an array of user uids
+      return records.map((r) => r.userUID)
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // create a new administrator
   new: async ({ name, email, isAdmin }) => {
     try {
@@ -90,38 +122,6 @@ module.exports = {
       }
 
       return
-    } catch (err) {
-      throw new Errors.InternalServerError(err.message)
-    }
-  },
-
-  // get all of the users
-  getAll: async (uid = false) => {
-    try {
-      const users = await pool.query('SELECT * FROM users;')
-      if (uid) {
-        return users.map((user) => user.uid)
-      }
-      return users
-    } catch (err) {
-      throw new Errors.InternalServerError(err.message)
-    }
-  },
-
-  // get who was associated with patternUIDs
-  getByPatterns: async (patternUIDs) => {
-    try {
-      // no users are affected by no patterns
-      if (!(patternUIDs && patternUIDs.length > 0)) {
-        return []
-      }
-
-      const records = await pool.query(
-        `SELECT userUID FROM records WHERE patternUID IN (?) GROUP BY userUID;`,
-        [patternUIDs]
-      )
-      // return an array of user uids
-      return records.map((r) => r.userUID)
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }

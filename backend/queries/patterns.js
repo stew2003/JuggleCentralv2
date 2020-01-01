@@ -35,6 +35,98 @@ module.exports = {
       throw new Errors.InternalServerError(err.message)
     }
   },
+
+  // create a new pattern
+  new: async ({ name, description, numObjects, gif }) => {
+    try {
+      // create a new pattern
+      const newPattern = await pool.query(
+        'INSERT INTO patterns (timeCreated, name, description, numObjects, GIF) VALUES (NOW(), ?, ?, ?, ?); SELECT * FROM patterns WHERE uid = LAST_INSERT_ID();',
+        [name, description, numObjects, gif]
+      )
+
+      if (!newPattern[1][0]) {
+        throw new Errors.InternalServerError(
+          'The pattern was not added correctly.'
+        )
+      }
+
+      return newPattern[1][0]
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // edit all the fields of an existing pattern
+  edit: async ({ uid, name, numObjects, description, gif }) => {
+    try {
+      // get old number of objects to determine change
+      const pattern = await pool.query(
+        'SELECT numObjects FROM patterns WHERE uid = ?;',
+        [uid]
+      )
+
+      // if the pattern does not exist
+      if (pattern.length === 0) {
+        throw new Error(
+          `Pattern with uid ${uid} does not exist and cannot be edited`
+        )
+      }
+
+      // apply the updates to the pattern table
+      await pool.query(
+        'UPDATE patterns SET name = ?, numObjects = ?, description = ?, GIF = ? WHERE uid = ?;',
+        [name, numObjects, description, gif, uid]
+      )
+
+      const oldNumObjects = pattern[0].numObjects
+
+      // if the old number of objects is the same as the new number of objects, end the function
+      if (oldNumObjects === numObjects) {
+        return
+      }
+
+      // get all users whose scores are affected by this change in difficulty
+      const affectedUsers = await userController.getByPatterns([uid])
+
+      // if there are no affected users, end the function
+      if (affectedUsers.length === 0) {
+        return
+      }
+
+      // handle change in pattern difficulty & manage ripple effect
+      await module.exports.handleDifficultyChange([uid], affectedUsers)
+
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // TODO: Ask Thomas about deleting records too
+  // deletes an existing pattern and all associated records
+  delete: async ({ uid }) => {
+    try {
+      // get users whose scores are affected by this pattern (relies on records, so we have to query this before deleting the pattern)
+      const affectedUsers = await userController.getByPatterns([uid])
+
+      // remove pattern from patterns table & delete all associated records
+      await pool.query('DELETE FROM patterns WHERE uid = ?;', [uid])
+
+      // if no users were affected by this pattern then end the function
+      if (affectedUsers.length === 0) {
+        return
+      }
+
+      await userController.calcScores(affectedUsers)
+      await userController.updateRanks()
+
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   /*	Recalculate and store the average personal best for time and catches for a given subset of patterns.
     If no subset given, will update average PB scores for all patterns. */
   updateAvgHighScores: async (patternUIDs) => {

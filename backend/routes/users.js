@@ -4,7 +4,6 @@ const { validate } = require('../middleware/validator')
 const schemas = require('../validation_schemas/users')
 
 const usersController = require('../queries/users')
-const patternController = require('../queries/patterns')
 
 const router = express.Router()
 
@@ -66,9 +65,6 @@ router.delete(
 // handle request to get all users
 router.get('/users', async (req, res, next) => {
   try {
-    // const pUIDs = await patternController.getAll(true)
-    // await patternController.maintainInfo(pUIDs)
-    // res.send(await patternController.getAll())
     res.send(await usersController.getAll())
   } catch (err) {
     next(err)
