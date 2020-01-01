@@ -1,10 +1,19 @@
 const Joi = require('@hapi/joi')
 
-const idSchema = Joi.number()
-  .integer()
-  .min(1)
-  .required()
-
 module.exports = {
-  idSchema
+  uid: Joi.number()
+    .integer()
+    .min(1)
+    .required(),
+
+  reqStr: Joi.string()
+    .min(1)
+    .trim()
+    .required(),
+
+  boolean: Joi.number()
+    .integer()
+    .min(0)
+    .max(1)
+    .required()
 }
