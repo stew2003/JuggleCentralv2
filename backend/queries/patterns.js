@@ -1,5 +1,5 @@
 const pool = require('./connection')
-const userController = require('./users')
+const usersController = require('./users')
 const recordsController = require('./records')
 const Errors = require('../utils/errors')
 
@@ -78,6 +78,8 @@ module.exports = {
   // edit all the fields of an existing pattern
   edit: async ({ uid, name, numObjects, description, gif }) => {
     try {
+      console.log(usersController)
+
       // get old number of objects to determine change
       const pattern = await pool.query(
         'SELECT numObjects FROM patterns WHERE uid = ?;',
@@ -105,7 +107,7 @@ module.exports = {
       }
 
       // get all users whose scores are affected by this change in difficulty
-      const affectedUsers = await userController.getByPatterns([uid])
+      const affectedUsers = await usersController.getByPatterns([uid])
 
       // if there are no affected users, end the function
       if (affectedUsers.length === 0) {
@@ -125,7 +127,7 @@ module.exports = {
   delete: async ({ uid }) => {
     try {
       // get users whose scores are affected by this pattern (relies on records, so we have to query this before deleting the pattern)
-      const affectedUsers = await userController.getByPatterns([uid])
+      const affectedUsers = await usersController.getByPatterns([uid])
 
       // get current max averages
       const {
@@ -150,7 +152,7 @@ module.exports = {
         newMaxAvgTime !== oldMaxAvgTime
       ) {
         const patternsToUpdate = await module.exports.getAll(true) // update ALL patterns
-        usersToUpdate = await userController.getAll(true) // update ALL users
+        usersToUpdate = await usersController.getAll(true) // update ALL users
 
         // update pattern difficulties appropriately & handle ripple effect
         await module.exports.handleDifficultyChange(
@@ -166,8 +168,8 @@ module.exports = {
         return
       }
 
-      await userController.calcScores(usersToUpdate)
-      await userController.updateRanks()
+      await usersController.calcScores(usersToUpdate)
+      await usersController.updateRanks()
 
       return
     } catch (err) {
@@ -419,8 +421,8 @@ module.exports = {
         return
       }
 
-      await userController.calcScores(affectedUsers)
-      await userController.updateRanks()
+      await usersController.calcScores(affectedUsers)
+      await usersController.updateRanks()
 
       return
     } catch (err) {
@@ -458,7 +460,7 @@ module.exports = {
       } = await module.exports.getMaxAvgHighScores()
 
       // determine which users are affected by changes in the affected patterns
-      const affectedUsers = userController.getByPatterns(affectedPatterns)
+      const affectedUsers = usersController.getByPatterns(affectedPatterns)
 
       let patternsToUpdate
       let usersToUpdate
@@ -469,7 +471,7 @@ module.exports = {
         newMaxAvgTime !== oldMaxAvgTime
       ) {
         patternsToUpdate = await module.exports.getAll(true) // update ALL patterns
-        usersToUpdate = await userController.getAll(true) // update ALL users
+        usersToUpdate = await usersController.getAll(true) // update ALL users
       } else {
         patternsToUpdate = affectedPatterns // only update affected patterns
         usersToUpdate = affectedUsers // only update affected users

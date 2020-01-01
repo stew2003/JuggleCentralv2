@@ -1,7 +1,6 @@
 const pool = require('./connection')
 const Errors = require('../utils/errors')
 const sys = require('../utils/settings')
-const patternController = require('./patterns')
 
 module.exports = {
   // get one of the users
@@ -337,3 +336,5 @@ module.exports = {
     }
   }
 }
+
+const patternController = require('./patterns')
