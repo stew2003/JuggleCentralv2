@@ -16,7 +16,7 @@ module.exports = {
         throw new Error(`There is no pattern with uid - ${uid}`)
       }
 
-      return pattern
+      return pattern[0]
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }

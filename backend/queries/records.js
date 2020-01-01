@@ -3,6 +3,23 @@ const Errors = require('../utils/errors')
 const userController = require('./users')
 
 module.exports = {
+  // get one of the records
+  get: async ({ uid }) => {
+    try {
+      const records = await pool.query('SELECT * FROM records WHERE uid = ?;', [
+        uid
+      ])
+
+      if (records.length === 0) {
+        throw new Error(`There is no record with uid - ${uid}`)
+      }
+
+      return records[0]
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all of the records
   getAll: async (uid = false) => {
     try {

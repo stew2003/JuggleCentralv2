@@ -13,7 +13,7 @@ module.exports = {
         throw new Error(`There is no user with uid - ${uid}`)
       }
 
-      return user
+      return user[0]
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
