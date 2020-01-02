@@ -55,7 +55,7 @@ module.exports = {
 
   // TODO:
   // Get recently created patterns.
-  getRecentNewPatterns: async (limit) => {},
+  getRecentCreations: async (limit) => {},
 
   // TODO:
   // get all possible numbers of objects of existing patterns

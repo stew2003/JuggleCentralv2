@@ -51,17 +51,45 @@ module.exports = {
     }
   },
 
-  // TODO:
   // get the UID of a user from a given record
-  getByRecord: async (uid) => {},
+  getByRecord: async (uid) => {
+    try {
+      const users = await pool.query(
+        'SELECT userUID FROM records WHERE uid = ?;',
+        [uid]
+      )
 
-  // TODO:
+      if (users.length === 0) {
+        throw new Error(`There is no user associated with record ${uid}`)
+      }
+
+      return users[0].userUID
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all users, ordered by rank
-  getLeaderboard: async () => {},
+  getLeaderboard: async () => {
+    try {
+      return await pool.query('SELECT * FROM users ORDER BY userRank ASC;')
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
-  // TODO:
   // get recently created user accounts
-  getRecent: async (limit) => {},
+  getRecentCreations: async (limit) => {
+    try {
+      // order users by time created to get most recent
+      return await pool.query(
+        'SELECT users.*, 1 = 1 AS isNewUserActivity FROM users ORDER BY timeCreated DESC LIMIT ?;',
+        [limit]
+      )
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
   // create a new administrator
   new: async ({ name, email, isAdmin }) => {
