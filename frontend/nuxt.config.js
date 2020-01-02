@@ -52,7 +52,10 @@ export default {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: 'http://api:8080',
+    browserBaseURL: 'http://localhost/api'
+  },
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module
