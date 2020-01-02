@@ -4,7 +4,7 @@ const validate = (origin, schema) => {
   return async (req, res, next) => {
     try {
       console.log(req[origin])
-      await schema.validateAsync(req[origin], {
+      req[origin] = await schema.validateAsync(req[origin], {
         abortEarly: false,
         convert: true
       })

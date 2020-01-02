@@ -4,13 +4,13 @@ const global = require('./global')
 const catches = Joi.number()
   .min(0)
   .integer()
-  .required()
 
 // eslint-disable-next-line no-useless-escape
-const duration = Joi.string().regex(/^([0-9]{2})\:([0-9]{2})$/)
+const duration = Joi.string().regex(/^([0-9]{2})\:([0-9]{2})\:([0-9]{2})$/)
 
 const video = Joi.string()
   .uri()
+  .allow('')
   .required()
 
 module.exports = {
@@ -37,6 +37,7 @@ module.exports = {
       duration,
       video
     })
+    .xor('catches', 'duration')
     .required(),
 
   edit: Joi.object()
@@ -47,6 +48,7 @@ module.exports = {
       duration,
       video
     })
+    .nand('catches', 'duration')
     .required(),
 
   delete: Joi.object()

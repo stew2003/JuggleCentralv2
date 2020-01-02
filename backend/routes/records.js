@@ -31,7 +31,7 @@ router.get(
 
 // handle request to get records associated with a user
 router.get(
-  '/record/user',
+  '/records/user',
   validate('query', schemas.get),
   async (req, res, next) => {
     try {
@@ -44,7 +44,7 @@ router.get(
 
 // handle request to get records associated with a pattern
 router.get(
-  '/record/pattern',
+  '/records/pattern',
   validate('query', schemas.get),
   async (req, res, next) => {
     try {

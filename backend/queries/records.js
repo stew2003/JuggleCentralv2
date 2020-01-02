@@ -145,7 +145,7 @@ module.exports = {
   },
 
   // get recently set records which are personal bests
-  getRecentPersonalBests: async (limit) => {
+  getRecentPersonalBests: async ({ limit }) => {
     try {
       if (!(limit && limit > 0)) {
         throw new Error('Cannot get recent personal bests with no limit')
