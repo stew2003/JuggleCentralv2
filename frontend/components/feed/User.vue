@@ -1,15 +1,14 @@
 <template>
   <v-card>
     <v-row no-gutters>
-      <v-col cols="7">
+      <v-col cols="12" md="6">
         <v-card-title>{{ user.name }} joined JuggleCentral</v-card-title>
       </v-col>
       <v-spacer> </v-spacer>
-      <v-col cols="2">
-        <v-card-title>Rank: {{ user.userRank }}</v-card-title>
-      </v-col>
-      <v-col cols="2">
-        <v-card-title>Score: {{ user.score }}</v-card-title>
+      <v-col cols="6" md="5">
+        <v-card-title>
+          Rank: {{ user.userRank }} Score: {{ user.score }}</v-card-title
+        >
       </v-col>
     </v-row>
     <v-divider></v-divider>

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row v-for="(item, i) in feed" :key="i" justify="center">
-      <v-col cols="7">
+      <v-col cols="12" md="7">
         <User v-if="item.isNewUserActivity" :user="item" />
       </v-col>
     </v-row>
