@@ -12,13 +12,6 @@ module.exports = {
     })
     .required(),
 
-  getRecent: Joi.object()
-    .keys({
-      limit: global.limit,
-      offset: global.offset
-    })
-    .required(),
-
   new: Joi.object()
     .keys({
       name: global.reqStr,

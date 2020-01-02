@@ -55,19 +55,6 @@ router.get(
   }
 )
 
-// handle request to get recent personal bests
-router.get(
-  '/records/pbs',
-  validate('query', schemas.getPBs),
-  async (req, res, next) => {
-    try {
-      res.send(await recordsController.getRecentPersonalBests(req.query))
-    } catch (err) {
-      next(err)
-    }
-  }
-)
-
 // handle request to create a new record
 router.post(
   '/record',

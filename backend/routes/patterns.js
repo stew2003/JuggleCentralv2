@@ -39,19 +39,6 @@ router.get(
   }
 )
 
-// handle request to get recently created patterns
-router.get(
-  '/patterns/recent',
-  validate('query', schemas.getRecent),
-  async (req, res, next) => {
-    try {
-      res.send(await patternsController.getRecentCreations(req.query))
-    } catch (err) {
-      next(err)
-    }
-  }
-)
-
 // handle request to get all possible number of objects
 router.get('/patterns/objects', async (req, res, next) => {
   try {

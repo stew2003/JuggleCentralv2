@@ -20,13 +20,6 @@ module.exports = {
     })
     .required(),
 
-  getPBs: Joi.object()
-    .keys({
-      limit: global.limit,
-      offset: global.offset
-    })
-    .required(),
-
   new: Joi.object()
     .keys({
       userUID: global.uid,
