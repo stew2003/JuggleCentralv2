@@ -6,6 +6,7 @@ const app = express()
 
 const userRoutes = require('./routes/users')
 const patternRoutes = require('./routes/patterns')
+const recordRoutes = require('./routes/records')
 
 app.use(cors())
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json())
 
 app.use('/', userRoutes)
 app.use('/', patternRoutes)
+app.use('/', recordRoutes)
 
 // create an error middleware!
 // eslint-disable-next-line no-unused-vars

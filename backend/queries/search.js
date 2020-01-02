@@ -2,12 +2,12 @@ const pool = require('./connection')
 const Errors = require('../utils/errors')
 
 module.exports = {
-  // TODO
+  // TODO:
   /*  Search the users table, matching name against given query.
 		  Empty query returns full table */
   searchUsers: async (query, orderBy, limit) => {},
 
-  // TODO
+  // TODO:
   /*  Searches the patterns table, matching name & description against the given query.
 		  If numObjects given, filter to include only patterns with that number of objects.
 		  Empty query returns full table

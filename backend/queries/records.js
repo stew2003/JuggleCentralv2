@@ -37,7 +37,7 @@ module.exports = {
   /*	Get all the records of a given user.
 		Will JOIN to get pattern name. ORDER BY patternUID, catches, duration.
 		Splits into array of pattern objects with uid, name, and all catch and time records for this user */
-  getByUser: async (userUID) => {
+  getByUser: async ({ uid: userUID }) => {
     try {
       // if there is no userUID given, throw an error
       if (!userUID) {
@@ -100,7 +100,7 @@ module.exports = {
   /*	Get all records for a specific pattern by UID. JOINs on user name. ORDER BY catches, duration;
 		This should both split the records into two “sections” and sort them properly in each category.
 		Splits into catch-based and time-based records, returns object with both arrays. */
-  getByPattern: async (patternUID) => {
+  getByPattern: async ({ uid: patternUID }) => {
     try {
       // if there is no userUID given, throw an error
       if (!patternUID) {

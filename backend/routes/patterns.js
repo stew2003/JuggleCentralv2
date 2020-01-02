@@ -3,14 +3,14 @@ const express = require('express')
 const { validate } = require('../middleware/validator')
 const schemas = require('../validation_schemas/patterns')
 
-const patternController = require('../queries/patterns')
+const patternsController = require('../queries/patterns')
 
 const router = express.Router()
 
-// handle request to get all pattern
+// handle request to get all patterns
 router.get('/patterns', async (req, res, next) => {
   try {
-    res.send(await patternController.getAll())
+    res.send(await patternsController.getAll())
   } catch (err) {
     next(err)
   }
@@ -22,7 +22,7 @@ router.get(
   validate('query', schemas.get),
   async (req, res, next) => {
     try {
-      res.send(await patternController.get(req.query))
+      res.send(await patternsController.get(req.query))
     } catch (err) {
       next(err)
     }
@@ -35,7 +35,7 @@ router.post(
   validate('body', schemas.new),
   async (req, res, next) => {
     try {
-      res.send(await patternController.new(req.body))
+      res.send(await patternsController.new(req.body))
     } catch (err) {
       next(err)
     }
@@ -48,7 +48,7 @@ router.put(
   validate('body', schemas.edit),
   async (req, res, next) => {
     try {
-      await patternController.edit(req.body)
+      await patternsController.edit(req.body)
       res.send()
     } catch (err) {
       next(err)
@@ -62,7 +62,7 @@ router.delete(
   validate('query', schemas.delete),
   async (req, res, next) => {
     try {
-      await patternController.delete(req.query)
+      await patternsController.delete(req.query)
       res.send()
     } catch (err) {
       next(err)
