@@ -16,7 +16,7 @@ module.exports = {
     if (limitQuery !== '') args.push(limit)
 
     try {
-      const results = await pool.query(
+      const users = await pool.query(
         `SELECT
           uid,
           name,
@@ -45,16 +45,20 @@ module.exports = {
         }
 
         // sort with the specified comparator
-        if (compare) results.sort(compare)
+        if (compare) users.sort(compare)
 
         // if no specified order and query empty, order by UID to push more recently created users to top
       } else if (q === '') {
-        results.sort((a, b) => {
+        users.sort((a, b) => {
           return b.uid - a.uid
         })
       }
 
-      return results
+      // count how many results for this query exist under patterns (with NO limit)
+      const patternResults = await module.exports.searchPatterns({ query: q })
+      const numPatternResults = patternResults.length
+
+      return { users, numPatternResults }
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -180,7 +184,11 @@ module.exports = {
         })
       }
 
-      return patterns
+      // count how many results for this query exist under users (with NO limit)
+      const userResults = await module.exports.searchUsers({ query: q })
+      const numUserResults = userResults.length
+
+      return { patterns, numUserResults }
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }

@@ -283,8 +283,7 @@ module.exports = {
   },
 
   /*	Redetermine the isPersonalBest flag for a given user competing in a given subset of patterns.
-		Operates on both catch- and time-based records.
-		If no subset given, it will update personal bests for all patterns in which the user competes */
+		Operates on both catch- and time-based records. */
   maintainPBs: async (userUID, patternUIDs) => {
     try {
       // default all records under this user & pattern to NOT the PB
