@@ -119,7 +119,8 @@ module.exports = {
 
       // create a new user
       const newUser = await pool.query(
-        'INSERT INTO users (timeCreated, userRank, name, email, isAdmin) VALUES (NOW(), ?, ?, ?, ?); SELECT * FROM users WHERE uid = LAST_INSERT_ID();',
+        `INSERT INTO users (timeCreated, userRank, name, email, isAdmin) VALUES (NOW(), ?, ?, ?, ?);
+        SELECT * FROM users WHERE uid = LAST_INSERT_ID();`,
         [rank, name, email, isAdmin]
       )
 
@@ -197,8 +198,16 @@ module.exports = {
 					ordered by user, pattern UID, and timeRecorded so the first in the pair of max 2 records per pattern will
           be the more recent one. */
       const records = await pool.query(
-        `SELECT r.userUID, r.score, r.timeRecorded, p.uid AS patternUID, p.difficulty as patternDifficulty FROM records r
-        JOIN patterns p ON r.patternUID = p.uid WHERE r.isPersonalBest = 1 AND r.userUID IN (?) ORDER BY r.userUID, patternUID ASC, timeRecorded DESC;`,
+        `SELECT
+          r.userUID,
+          r.score,
+          r.timeRecorded,
+          p.uid AS patternUID,
+          p.difficulty as patternDifficulty
+        FROM
+          records r JOIN patterns p ON r.patternUID = p.uid
+        WHERE r.isPersonalBest = 1 AND r.userUID IN (?)
+        ORDER BY r.userUID, patternUID ASC, timeRecorded DESC;`,
         [uids]
       )
 
@@ -253,8 +262,9 @@ module.exports = {
   // convert existing user scores into user ranks for all users
   updateRanks: async () => {
     try {
-      /*	This gets all the possible scores (no duplicates) from the users table, ordered highest to lowest. We simply need to rank them and
-			then UPDATE to add that same rank to any users who share that score. */
+      /*	This gets all the possible scores (no duplicates) from the users table,
+          ordered highest to lowest. We simply need to rank them and
+			    then UPDATE to add that same rank to any users who share that score. */
       const scores = await pool.query(
         'SELECT score FROM users GROUP BY score ORDER BY score DESC;'
       )
@@ -334,8 +344,9 @@ module.exports = {
       const patternToPBs = {}
 
       /*	Get each pattern's time and catch personal bests from the query result
-        This will overwrite with each progressive row, so if duplicate PBs exist for a given pattern / category,
-        the most recent record will be the only one marked with isPersonalBest = 1 (result is already ordered by timeRecorded) */
+          This will overwrite with each progressive row, so if duplicate PBs exist
+          for a given pattern / category, the most recent record will be the only
+          one marked with isPersonalBest = 1 (result is already ordered by timeRecorded) */
       for (let i = 0; i < records.length; i++) {
         const pUID = records[i].patternUID
 

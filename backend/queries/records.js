@@ -45,7 +45,13 @@ module.exports = {
       }
 
       const records = await pool.query(
-        'SELECT r.*, p.name AS patternName FROM records r JOIN patterns p ON r.patternUID = p.uid WHERE r.userUID = ? ORDER BY r.patternUID, r.duration DESC, r.catches DESC;',
+        `SELECT
+          r.*,
+          p.name AS patternName
+        FROM
+          records r JOIN patterns p ON r.patternUID = p.uid
+        WHERE r.userUID = ?
+        ORDER BY r.patternUID, r.duration DESC, r.catches DESC;`,
         [userUID]
       )
 
@@ -110,7 +116,14 @@ module.exports = {
       }
 
       const records = await pool.query(
-        'SELECT r.*, u.name AS userName, u.userRank FROM records r JOIN users u ON r.userUID = u.uid WHERE r.patternUID = ? ORDER BY r.catches DESC, r.duration DESC;',
+        `SELECT
+          r.*,
+          u.name AS userName,
+          u.userRank
+        FROM
+          records r JOIN users u ON r.userUID = u.uid
+        WHERE r.patternUID = ?
+        ORDER BY r.catches DESC, r.duration DESC;`,
         [patternUID]
       )
 
@@ -147,7 +160,8 @@ module.exports = {
   // get recently set records which are personal bests
   getRecentPersonalBests: async ({ limit, offset }) => {
     try {
-      // select only personal bests from records, joining to get user and pattern name, limiting size of response
+      /*  select only personal bests from records, joining to get
+          user and pattern name, limiting size of response */
       return await pool.query(
         `SELECT
           r.*,
@@ -173,7 +187,10 @@ module.exports = {
     try {
       // add the new record to db
       await pool.query(
-        'INSERT INTO records (userUID, patternUID, catches, duration, video, timeRecorded) VALUES (?, ?, ?, ?, ?, NOW());',
+        `INSERT INTO records
+          (userUID, patternUID, catches, duration, video, timeRecorded)
+        VALUES
+          (?, ?, ?, ?, ?, NOW());`,
         [userUID, patternUID, catches, duration, video]
       )
 
@@ -253,10 +270,17 @@ module.exports = {
         throw new Error('Needs patterns to update')
       }
 
-      /*	This gets all the relevant PB records for these patterns, grouped off by pattern, and within that,
-			ordered catch records (best to worst) come first, then ordered duration records (best to worst) (converted to seconds already) */
+      /*	This gets all the relevant PB records for these patterns,
+          grouped off by pattern, and within that, ordered catch records
+          (best to worst) come first, then ordered duration records (best to worst)
+          (converted to seconds already) */
       const records = await pool.query(
-        'SELECT records.*, TIME_TO_SEC(duration) AS seconds FROM records WHERE isPersonalBest = 1 AND patternUID IN (?) ORDER BY patternUID, catches DESC, seconds DESC;',
+        `SELECT
+          records.*,
+          TIME_TO_SEC(duration) AS seconds
+        FROM records
+        WHERE isPersonalBest = 1 AND patternUID IN (?)
+        ORDER BY patternUID, catches DESC, seconds DESC;`,
         [patternUIDs]
       )
 
@@ -335,8 +359,8 @@ module.exports = {
           }
         }
 
-        // move i to 1 before the last record we were looking at
-        // (so that when the loop increments i, we will be at the start of a new pattern)
+        /*  move i to 1 before the last record we were looking at (so that
+          when the loop increments i, we will be at the start of a new pattern) */
         i = j - 1
       }
 
@@ -345,7 +369,10 @@ module.exports = {
 
       // apply updates to record scores & ranks
       await pool.query(
-        `UPDATE records SET score = CASE${scoreQuery} ELSE score END, recordRank = CASE${rankQuery} ELSE recordRank END;`,
+        `UPDATE records SET
+          score = CASE${scoreQuery} ELSE score END,
+          recordRank = CASE${rankQuery} ELSE recordRank
+        END;`,
         args
       )
 
@@ -366,7 +393,8 @@ module.exports = {
         throw new Error('Some patterns must be affected by this record')
       }
 
-      // maintain the personal bests in patterns affected by this record (usually just one, possibly two with an edit and pattern change (old and new))
+      /* maintain the personal bests in patterns affected by this record (usually just
+        one, possibly two with an edit and pattern change (old and new)) */
       await userController.maintainPBs(userUID, affectedPatterns)
 
       // maintain all pattern data in those affected by this change in record

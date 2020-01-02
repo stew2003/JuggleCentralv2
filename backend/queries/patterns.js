@@ -82,7 +82,8 @@ module.exports = {
     try {
       // create a new pattern
       const newPattern = await pool.query(
-        'INSERT INTO patterns (timeCreated, name, description, numObjects, GIF) VALUES (NOW(), ?, ?, ?, ?); SELECT * FROM patterns WHERE uid = LAST_INSERT_ID();',
+        `INSERT INTO patterns (timeCreated, name, description, numObjects, GIF) VALUES (NOW(), ?, ?, ?, ?);
+        SELECT * FROM patterns WHERE uid = LAST_INSERT_ID();`,
         [name, description, numObjects, gif]
       )
 
@@ -149,7 +150,8 @@ module.exports = {
   // deletes an existing pattern and all associated records
   delete: async ({ uid }) => {
     try {
-      // get users whose scores are affected by this pattern (relies on records, so we have to query this before deleting the pattern)
+      /*  get users whose scores are affected by this pattern (relies on
+          records, so we have to query this before deleting the pattern) */
       const affectedUsers = await usersController.getByPatterns([uid])
 
       // get current max averages
@@ -215,7 +217,12 @@ module.exports = {
       )
 
       const records = await pool.query(
-        'SELECT records.*, TIME_TO_SEC(duration) AS seconds FROM records WHERE isPersonalBest = 1 AND patternUID IN (?) ORDER BY patternUID;',
+        `SELECT
+          records.*,
+          TIME_TO_SEC(duration) AS seconds
+        FROM records
+        WHERE isPersonalBest = 1 AND patternUID IN (?)
+        ORDER BY patternUID;`,
         [patternUIDs]
       )
 
@@ -286,7 +293,9 @@ module.exports = {
       const updates = catches.concat(times)
 
       await pool.query(
-        `UPDATE patterns SET avgHighScoreCatch = CASE${catchQuery} ELSE avgHighScoreCatch END, avgHighScoreTime = CASE${timeQuery} ELSE avgHighScoreTime END;`,
+        `UPDATE patterns SET
+          avgHighScoreCatch = CASE${catchQuery} ELSE avgHighScoreCatch END,
+          avgHighScoreTime = CASE${timeQuery} ELSE avgHighScoreTime END;`,
         updates
       )
 
@@ -299,6 +308,7 @@ module.exports = {
   // get the current max average high score values for both time and catches across all patterns
   getMaxAvgHighScores: async () => {
     try {
+      // select the highest average high scores across all patterns
       const maxes = await pool.query(
         'SELECT MAX(avgHighScoreCatch) AS maxAvgCatch, MAX(avgHighScoreTime) AS maxAvgTime FROM patterns;'
       )
@@ -315,10 +325,10 @@ module.exports = {
     }
   },
 
-  /*	Determine the relative frequencies of each scoring method (catch- and time-based) for a given subset of patterns
-		Calls back on a mapping from pattern UID to an object of the form { timeWeight: <float>, catchWeight: <float> }
-		representing the weights for that pattern.
-		If a pattern UID maps to null, assume to use weights of 0 for that pattern. */
+  /*	Determine the relative frequencies of each scoring method (catch- and time-based)
+      for a given subset of patterns. Calls back on a mapping from pattern UID to an object
+      of the form { timeWeight: <float>, catchWeight: <float> } representing the weights
+      for that pattern. If a pattern UID maps to null, assume to use weights of 0 for that pattern. */
   getScoringWeights: async (patternUIDs) => {
     try {
       if (!(patternUIDs && patternUIDs.length > 0)) {
@@ -326,7 +336,13 @@ module.exports = {
       }
 
       const records = await pool.query(
-        'SELECT patternUID, catches IS NULL AS isTimeRecord, COUNT(*) AS count FROM records WHERE patternUID IN (?) GROUP BY patternUID, isTimeRecord;',
+        `SELECT
+          patternUID,
+          catches IS NULL AS isTimeRecord,
+          COUNT(*) AS count
+        FROM records
+        WHERE patternUID IN (?)
+        GROUP BY patternUID, isTimeRecord;`,
         [patternUIDs]
       )
 
@@ -407,7 +423,8 @@ module.exports = {
         const relDifficulty =
           w.catchWeight * catchDifficulty + w.timeWeight * timeDifficulty
 
-        // compute actual difficulty as number of objects scaled up by relative difficulty (only if rel. difficulty non-zero)
+        /*  compute actual difficulty as number of objects scaled up by
+            relative difficulty (only if rel. difficulty non-zero) */
         let difficulty = patterns[i].numObjects
         if (relDifficulty > 0) difficulty *= 2 - relDifficulty
 
