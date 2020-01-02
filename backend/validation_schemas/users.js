@@ -12,12 +12,10 @@ module.exports = {
     })
     .required(),
 
-  limit: Joi.object()
+  getRecent: Joi.object()
     .keys({
-      limit: Joi.number()
-        .integer()
-        .min(1)
-        .required()
+      limit: global.limit,
+      offset: global.offset
     })
     .required(),
 

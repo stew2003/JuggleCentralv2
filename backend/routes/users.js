@@ -28,7 +28,7 @@ router.get('/user', validate('query', schemas.get), async (req, res, next) => {
 // handle request to get recently created users
 router.get(
   '/users/recent',
-  validate('query', schemas.limit),
+  validate('query', schemas.getRecent),
   async (req, res, next) => {
     try {
       res.send(await usersController.getRecentCreations(req.query))

@@ -56,10 +56,6 @@ module.exports = {
   // get recently created patterns.
   getRecentCreations: async ({ limit, offset }) => {
     try {
-      if (!(limit && limit > 0 && offset && offset >= 0)) {
-        throw new Error('Cannot get recent new patterns with no limit')
-      }
-
       // order users by time created to get most recent
       return await pool.query(
         'SELECT patterns.*, 1 = 1 AS isNewPatternActivity FROM patterns ORDER BY timeCreated DESC LIMIT ?, ?;',

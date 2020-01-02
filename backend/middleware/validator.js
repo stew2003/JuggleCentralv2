@@ -8,6 +8,7 @@ const validate = (origin, schema) => {
         abortEarly: false,
         convert: true
       })
+      console.log(req[origin])
       next()
     } catch (err) {
       console.log(err)

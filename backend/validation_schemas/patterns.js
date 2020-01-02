@@ -8,14 +8,10 @@ module.exports = {
     })
     .required(),
 
-  limit: Joi.object()
-    .keys({
-      limit: Joi.number()
-        .integer()
-        .min(1)
-        .required()
-    })
-    .required(),
+  getRecent: Joi.object().keys({
+    limit: global.limit,
+    offset: global.offset
+  }),
 
   new: Joi.object()
     .keys({
