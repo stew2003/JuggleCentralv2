@@ -38,7 +38,9 @@ module.exports = {
     })
     .required(),
 
-  delete: Joi.object().keys({
-    uid: global.uid
-  })
+  delete: Joi.object()
+    .keys({
+      uid: global.uid
+    })
+    .required()
 }
