@@ -102,8 +102,6 @@ module.exports = {
   // edit all the fields of an existing pattern
   edit: async ({ uid, name, numObjects, description, gif }) => {
     try {
-      console.log(usersController)
-
       // get old number of objects to determine change
       const pattern = await pool.query(
         'SELECT numObjects FROM patterns WHERE uid = ?;',

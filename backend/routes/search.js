@@ -22,7 +22,7 @@ router.get(
 
 // get the pattern data for the search page
 router.get(
-  '/search/users',
+  '/search/patterns',
   validate('query', schemas.patterns),
   async (req, res, next) => {
     try {
