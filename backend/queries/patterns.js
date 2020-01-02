@@ -53,13 +53,29 @@ module.exports = {
     }
   },
 
-  // TODO:
-  // Get recently created patterns.
-  getRecentCreations: async (limit) => {},
+  // get recently created patterns.
+  getRecentCreations: async (limit) => {
+    try {
+      // order users by time created to get most recent
+      return await pool.query(
+        'SELECT patterns.*, 1 = 1 AS isNewPatternActivity FROM patterns ORDER BY timeCreated DESC LIMIT ?;',
+        [limit]
+      )
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
-  // TODO:
   // get all possible numbers of objects of existing patterns
-  getPossibleNumObjects: async () => {},
+  getPossibleNumObjects: async () => {
+    try {
+      return await pool.query(
+        'SELECT numObjects FROM patterns GROUP BY numObjects;'
+      )
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
 
   // create a new pattern
   new: async ({ name, description, numObjects, gif }) => {
