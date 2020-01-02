@@ -147,9 +147,6 @@ module.exports = {
   // get recently set records which are personal bests
   getRecentPersonalBests: async ({ limit, offset }) => {
     try {
-      if (!(limit && limit > 0 && offset && offset >= 0)) {
-        throw new Error('Cannot get recent personal bests with no limit')
-      }
       // select only personal bests from records, joining to get user and pattern name, limiting size of response
       return await pool.query(
         `SELECT

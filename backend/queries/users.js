@@ -81,10 +81,6 @@ module.exports = {
   // get recently created user accounts
   getRecentCreations: async ({ limit, offset }) => {
     try {
-      if (!(limit && limit > 0 && offset && offset >= 0)) {
-        throw new Error('Cannot get recent new users with no limit')
-      }
-
       // order users by time created to get most recent
       return await pool.query(
         'SELECT users.*, 1 = 1 AS isNewUserActivity FROM users ORDER BY timeCreated DESC LIMIT ?, ?;',
