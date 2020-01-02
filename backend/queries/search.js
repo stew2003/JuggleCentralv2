@@ -10,7 +10,7 @@ module.exports = {
 
     // add wildcard to search query to broaden search
     const q = query === '' ? query : `${query}*`
-
+    console.log(q)
     // add limit as argument to query if given
     const args = [q, q, q]
     if (limitQuery !== '') args.push(limit)

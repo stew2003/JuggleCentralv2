@@ -5,6 +5,7 @@ module.exports = {
     .keys({
       query: Joi.string()
         .trim()
+        .allow('')
         .required(),
       orderBy: Joi.string()
         .valid('RELEVANCE', 'RANK')
@@ -21,6 +22,7 @@ module.exports = {
     .keys({
       query: Joi.string()
         .trim()
+        .allow('')
         .required(),
       orderBy: Joi.string()
         .valid('RELEVANCE', 'DIFFICULTY', 'NUM_OBJECTS', 'POPULARITY')
