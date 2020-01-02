@@ -1,5 +1,4 @@
 const Joi = require('@hapi/joi')
-const global = require('./global')
 
 module.exports = {
   users: Joi.object()
@@ -11,7 +10,10 @@ module.exports = {
         .valid('RELEVANCE', 'RANK')
         .failover('RELEVANCE')
         .required(),
-      limit: global.limit.default(null)
+      limit: Joi.number()
+        .integer()
+        .min(1)
+        .default(null)
     })
     .required(),
 
@@ -28,7 +30,10 @@ module.exports = {
         .integer()
         .min(1)
         .when('orderBy', { is: 'NUM_OBJECTS', then: Joi.required() }),
-      limit: global.limit.default(null)
+      limit: Joi.number()
+        .integer()
+        .min(1)
+        .default(null)
     })
     .required()
 }
