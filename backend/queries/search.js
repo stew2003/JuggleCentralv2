@@ -4,7 +4,7 @@ const Errors = require('../utils/errors')
 module.exports = {
   /*  Search the users table, matching name against given query.
 		  Empty query returns full table */
-  searchUsers: async (query, orderBy, limit) => {
+  searchUsers: async ({ query, orderBy, limit }) => {
     // determine what to limit by, if anything
     const limitQuery = limit && limit > 0 ? ' LIMIT ?' : ''
 
@@ -65,7 +65,7 @@ module.exports = {
 		  Empty query returns full table
 		  If orderBy given, use this to order the results that match against the query.
 		  OrderBy can be: 'DIFFICULTY', 'NUM_OBJECTS', 'POPULARITY', or null to order by relevance */
-  searchPatterns: async (query, numObjects, orderBy, limit) => {
+  searchPatterns: async ({ query, numObjects, orderBy, limit }) => {
     // determine what to limit by, if anything
     const limitQuery = limit && limit > 0 ? ' LIMIT ?' : ''
 
