@@ -32,7 +32,7 @@ router.get(
 // handle request to get recently created patterns
 router.get(
   '/patterns/recent',
-  validate('query', schemas.limit),
+  validate('query', schemas.getRecent),
   async (req, res, next) => {
     try {
       res.send(await patternsController.getRecentCreations(req.query))

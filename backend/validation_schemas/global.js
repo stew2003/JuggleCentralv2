@@ -15,5 +15,15 @@ module.exports = {
     .integer()
     .min(0)
     .max(1)
+    .required(),
+
+  limit: Joi.number()
+    .integer()
+    .min(1)
+    .required(),
+
+  offset: Joi.number()
+    .integer()
+    .min(0)
     .required()
 }

@@ -22,10 +22,8 @@ module.exports = {
 
   getPBs: Joi.object()
     .keys({
-      limit: Joi.number()
-        .min(1)
-        .integer()
-        .required()
+      limit: global.limit,
+      offset: global.offset
     })
     .required(),
 
