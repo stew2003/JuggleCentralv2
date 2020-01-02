@@ -54,7 +54,7 @@ module.exports = {
   },
 
   // get recently created patterns.
-  getRecentCreations: async (limit) => {
+  getRecentCreations: async ({ limit }) => {
     try {
       // order users by time created to get most recent
       return await pool.query(

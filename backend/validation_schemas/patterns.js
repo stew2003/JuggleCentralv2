@@ -8,6 +8,15 @@ module.exports = {
     })
     .required(),
 
+  limit: Joi.object()
+    .keys({
+      limit: Joi.number()
+        .integer()
+        .min(1)
+        .required()
+    })
+    .required(),
+
   new: Joi.object()
     .keys({
       name: global.reqStr,

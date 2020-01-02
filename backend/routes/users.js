@@ -16,10 +16,32 @@ router.get('/users', async (req, res, next) => {
   }
 })
 
-// handle request go get one user
+// handle request to get one user
 router.get('/user', validate('query', schemas.get), async (req, res, next) => {
   try {
     res.send(await usersController.get(req.query))
+  } catch (err) {
+    next(err)
+  }
+})
+
+// handle request to get recently created users
+router.get(
+  '/users/recent',
+  validate('query', schemas.limit),
+  async (req, res, next) => {
+    try {
+      res.send(await usersController.getRecentCreations(req.query))
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+// handle request to get ther user leaderboards
+router.get('/users/leaderboard', async (req, res, next) => {
+  try {
+    res.send(await usersController.getLeaderboard())
   } catch (err) {
     next(err)
   }

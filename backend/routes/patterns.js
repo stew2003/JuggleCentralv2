@@ -16,7 +16,7 @@ router.get('/patterns', async (req, res, next) => {
   }
 })
 
-// handle request to get a pattern
+// handle request to get a pattern by uid
 router.get(
   '/pattern',
   validate('query', schemas.get),
@@ -28,6 +28,28 @@ router.get(
     }
   }
 )
+
+// handle request to get recently created patterns
+router.get(
+  '/patterns/recent',
+  validate('query', schemas.limit),
+  async (req, res, next) => {
+    try {
+      res.send(await patternsController.getRecentCreations(req.query))
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+// handle request to get all possible number of objects
+router.get('/patterns/objects', async (req, res, next) => {
+  try {
+    res.send(await patternsController.getPossibleNumObjects())
+  } catch (err) {
+    next(err)
+  }
+})
 
 // handle request to add new user
 router.post(
