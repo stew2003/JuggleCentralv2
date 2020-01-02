@@ -145,15 +145,26 @@ module.exports = {
   },
 
   // get recently set records which are personal bests
-  getRecentPersonalBests: async ({ limit }) => {
+  getRecentPersonalBests: async ({ limit, offset }) => {
     try {
-      if (!(limit && limit > 0)) {
+      if (!(limit && limit > 0 && offset && offset >= 0)) {
         throw new Error('Cannot get recent personal bests with no limit')
       }
       // select only personal bests from records, joining to get user and pattern name, limiting size of response
       return await pool.query(
-        'SELECT r.*, r.timeRecorded AS timeCreated, u.name AS userName, p.name AS patternName, 1 = 1 AS isPBActivity FROM records r JOIN users u ON r.userUID = u.uid JOIN patterns p ON r.patternUID = p.uid WHERE r.isPersonalBest = 1 ORDER BY uid DESC LIMIT ?;',
-        [limit]
+        `SELECT
+          r.*,
+          r.timeRecorded AS timeCreated,
+          u.name AS userName,
+          p.name AS patternName,
+          1 = 1 AS isPBActivity
+        FROM
+          records r JOIN users u ON r.userUID = u.uid
+          JOIN patterns p ON r.patternUID = p.uid
+        WHERE r.isPersonalBest = 1
+        ORDER BY uid DESC
+        LIMIT ?, ?;`,
+        [offset, limit]
       )
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
