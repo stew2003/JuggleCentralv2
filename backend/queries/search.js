@@ -25,7 +25,9 @@ module.exports = {
           score,
           MATCH (name) AGAINST (? IN BOOLEAN MODE) AS termScore
         FROM users
-        WHERE MATCH (name) AGAINST (? IN BOOLEAN MODE) OR ? = ""
+        WHERE
+          MATCH (name) AGAINST (? IN BOOLEAN MODE)
+          OR ? = ""
         ORDER BY termScore DESC${limitQuery};`,
         args
       )
