@@ -7,14 +7,26 @@ const searchController = require('../queries/search')
 
 const router = express.Router()
 
-// TODO:
-// get the data for the search page
+// get the user data for the search page
 router.get(
-  '/search',
-  validate('query', schemas.get),
+  '/search/users',
+  validate('query', schemas.users),
   async (req, res, next) => {
     try {
-      res.send('TODO')
+      res.send(await searchController.searchUsers(req.query))
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+// get the pattern data for the search page
+router.get(
+  '/search/users',
+  validate('query', schemas.patterns),
+  async (req, res, next) => {
+    try {
+      res.send(await searchController.searchPatterns(req.query))
     } catch (err) {
       next(err)
     }
