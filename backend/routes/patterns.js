@@ -7,6 +7,16 @@ const patternsController = require('../queries/patterns')
 
 const router = express.Router()
 
+// throw-away test route
+router.post('/patterns/calculate', async (req, res, next) => {
+  try {
+    await patternsController.maintainInfo(await patternsController.getAll(true))
+    res.send()
+  } catch (err) {
+    next(err)
+  }
+})
+
 // handle request to get all patterns
 router.get('/patterns', async (req, res, next) => {
   try {

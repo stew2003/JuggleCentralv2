@@ -9,7 +9,7 @@ CREATE TABLE users (
 	score INT DEFAULT 0,			-- holistic measure of user's juggling skill
 	userRank INT,					-- user's position in the leaderboard sorted / pooled by user score
 	PRIMARY KEY (uid)
-);
+) ENGINE=MyISAM;
 
 -- create index on users' names for search engine
 CREATE FULLTEXT INDEX userIndex ON users(name);
@@ -26,7 +26,7 @@ CREATE TABLE patterns (
 	avgHighScoreCatch FLOAT,		-- average high score for catches in this pattern
 	avgHighScoreTime FLOAT,			-- average high score for time in this pattern (ms)
 	PRIMARY KEY (uid)
-);
+) ENGINE=MyISAM;
 
 -- create index on pattern names & descriptions for search engine
 CREATE FULLTEXT INDEX patternIndex ON patterns(name, description);
@@ -46,4 +46,6 @@ CREATE TABLE records (
 	FOREIGN KEY (userUID) REFERENCES users(uid) ON DELETE CASCADE,
 	FOREIGN KEY (patternUID) REFERENCES patterns(uid) ON DELETE CASCADE,
 	PRIMARY KEY (uid)
-);
+) ENGINE=MyISAM;
+
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'only_full_group_by',''));
