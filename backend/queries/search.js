@@ -1,5 +1,6 @@
 const pool = require('./connection')
 const Errors = require('../utils/errors')
+const difficulty = require('../utils/difficulty')
 
 module.exports = {
   /*  Search the users table, matching name against given query.
@@ -126,24 +127,10 @@ module.exports = {
             participation[i].numUsers
         }
 
-        // get the maximum difficulty from patterns
-        const max = await pool.query(
-          'SELECT MAX(difficulty) AS max FROM patterns;'
-        )
-
-        if (max.length === 0) {
-          throw new Error('Failed to determine max pattern difficulty')
-        }
-
-        const maxDiff = max[0].max
+        // scale the pattern difficulties out of 10 so they are human-readable
+        await difficulty.scaleDifficulties(patterns)
 
         for (let i = 0; i < patterns.length; i++) {
-          // scale all difficulties out of 10 (human-readable)
-          patterns[i].difficulty = (10 * patterns[i].difficulty) / maxDiff
-
-          // round off difficulty
-          patterns[i].difficulty = patterns[i].difficulty.toFixed(2)
-
           // add number of users to pattern object
           patterns[i].numUsers = uidToPopularity[patterns[i].uid]
 

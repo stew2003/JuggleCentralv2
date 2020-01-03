@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 const pool = require('./connection')
 const Errors = require('../utils/errors')
+const difficulty = require('../utils/difficulty')
 
 module.exports = {
   // get one of the patterns
@@ -61,10 +62,13 @@ module.exports = {
       }
 
       // order users by time created to get most recent
-      return await pool.query(
+      const patterns = await pool.query(
         'SELECT patterns.*, 1 = 1 AS isNewPatternActivity FROM patterns ORDER BY timeCreated DESC LIMIT ?;',
         [limit]
       )
+
+      // scale difficulties out of 10 before returning
+      return difficulty.scaleDifficulties(patterns)
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
