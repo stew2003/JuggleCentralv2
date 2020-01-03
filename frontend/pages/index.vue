@@ -3,6 +3,8 @@
     <v-row v-for="(item, i) in feed" :key="i" justify="center">
       <v-col cols="12" md="7">
         <User v-if="item.isNewUserActivity" :user="item" />
+        <JugglePattern v-if="item.isNewPatternActivity" :pattern="item" />
+        <Record v-if="item.isPBActivity" :record="item" />
       </v-col>
     </v-row>
   </v-container>
@@ -10,10 +12,14 @@
 
 <script>
 import User from '@/components/feed/User.vue'
+import JugglePattern from '@/components/feed/JugglePattern.vue'
+import Record from '@/components/feed/Record.vue'
 
 export default {
   components: {
-    User
+    User,
+    JugglePattern,
+    Record
   },
   async asyncData({ app, error }) {
     try {

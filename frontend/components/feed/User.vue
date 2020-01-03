@@ -1,16 +1,25 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="title font-weight-light">{{ user.name }}</span>
+      <span class="title font-weight-light text-truncate mr-10">
+        <nuxt-link :to="`/user/${user.uid}`" class="name">
+          {{ user.name }}
+        </nuxt-link>
+        joined JuggleCentral
+      </span>
       <v-spacer></v-spacer>
-      <span class="subtitle-2">Rank: {{ user.userRank }}</span>
-      <span class="subtitle-2 ml-5">Score: {{ user.score }}</span>
+      <div>
+        <span class="subtitle-2">Rank: {{ user.userRank }}</span>
+        <span class="subtitle-2 ml-5">Score: {{ user.score }}</span>
+      </div>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      {{ bio }}
+      <span>{{ bio }}</span>
       <v-spacer></v-spacer>
-      {{ user.relativeTime }}
+      <div class="text-right white--text mt-5" style="width: 100%;">
+        {{ user.relativeTime }}
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -36,4 +45,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.name {
+  text-decoration: none !important;
+}
+</style>
