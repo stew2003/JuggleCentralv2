@@ -1,20 +1,15 @@
 <template>
   <v-card>
-    <v-row no-gutters>
-      <v-col cols="7">
-        <v-card-title>{{ user.name }} joined JuggleCentral</v-card-title>
-      </v-col>
-      <v-spacer> </v-spacer>
-      <v-col cols="2">
-        <v-card-title>Rank: {{ user.userRank }}</v-card-title>
-      </v-col>
-      <v-col cols="2">
-        <v-card-title>Score: {{ user.score }}</v-card-title>
-      </v-col>
-    </v-row>
+    <v-card-title>
+      <span class="title font-weight-light">{{ user.name }}</span>
+      <v-spacer></v-spacer>
+      <span class="subtitle-2">Rank: {{ user.userRank }}</span>
+      <span class="subtitle-2 ml-5">Score: {{ user.score }}</span>
+    </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      {{ bio }}<v-spacer></v-spacer>
+      {{ bio }}
+      <v-spacer></v-spacer>
       {{ user.relativeTime }}
     </v-card-text>
   </v-card>
