@@ -28,9 +28,9 @@
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <v-row align="center" justify="center">
-        <v-col cols="3">
-          <v-card v-if="pattern.GIF" class="pa-3">
+      <v-row v-if="pattern.GIF" align="center" justify="center">
+        <v-col cols="8" sm="4">
+          <v-card class="pa-3" elevation="6" color="grey darken-1">
             <v-img :src="pattern.GIF"></v-img>
           </v-card>
         </v-col>
@@ -40,8 +40,8 @@
           <span>{{ description }}</span>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col class="text-right grey--text mt-5">
+      <v-row class="mb-0">
+        <v-col class="text-right grey--text mt-5 pb-0">
           {{ pattern.relativeTime }}
         </v-col>
       </v-row>
