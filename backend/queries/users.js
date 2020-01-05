@@ -7,7 +7,17 @@ module.exports = {
   // get one of the users
   get: async ({ uid }) => {
     try {
-      const user = await pool.query('SELECT * FROM users WHERE uid = ?;', [uid])
+      const user = await pool.query(
+        `SELECT
+          timeCreated,
+          name,
+          bio,
+          isAdmin,
+          score,
+          userRank
+        FROM users WHERE uid = ?;`,
+        [uid]
+      )
 
       if (user.length === 0) {
         throw new Error(`There is no user with uid - ${uid}`)
@@ -22,7 +32,16 @@ module.exports = {
   // get all of the users
   getAll: async (uid = false) => {
     try {
-      const users = await pool.query('SELECT * FROM users;')
+      const users = await pool.query(
+        `SELECT
+          timeCreated,
+          name,
+          bio,
+          isAdmin,
+          score,
+          userRank
+        FROM users;`
+      )
       if (uid) {
         return users.map((user) => user.uid)
       }
@@ -72,7 +91,16 @@ module.exports = {
   // get all users, ordered by rank
   getLeaderboard: async () => {
     try {
-      return await pool.query('SELECT * FROM users ORDER BY userRank ASC;')
+      return await pool.query(
+        `SELECT
+          timeCreated,
+          name,
+          bio,
+          isAdmin,
+          score,
+          userRank
+        FROM users ORDER BY userRank ASC;`
+      )
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }
@@ -87,7 +115,15 @@ module.exports = {
 
       // order users by time created to get most recent
       return await pool.query(
-        'SELECT users.*, 1 = 1 AS isNewUserActivity FROM users ORDER BY timeCreated DESC LIMIT ?;',
+        `SELECT
+          timeCreated,
+          name,
+          bio,
+          isAdmin,
+          score,
+          userRank,
+          1 = 1 AS isNewUserActivity
+        FROM users ORDER BY timeCreated DESC LIMIT ?;`,
         [limit]
       )
     } catch (err) {
@@ -124,7 +160,14 @@ module.exports = {
       // create a new user
       const newUser = await pool.query(
         `INSERT INTO users (timeCreated, userRank, name, email, isAdmin) VALUES (NOW(), ?, ?, ?, ?);
-        SELECT * FROM users WHERE uid = LAST_INSERT_ID();`,
+        SELECT
+          timeCreated,
+          name,
+          bio,
+          isAdmin,
+          score,
+          userRank
+        FROM users WHERE uid = LAST_INSERT_ID();`,
         [rank, name, email, isAdmin]
       )
 
@@ -192,7 +235,7 @@ module.exports = {
     try {
       // if no users are passed in, do nothing
       if (!(uids && uids.length > 0)) {
-        throw new Error('Cannot calcualte scores for no users')
+        throw new Error('Cannot calculate scores for no users')
       }
 
       // initialize all user scores to 0
