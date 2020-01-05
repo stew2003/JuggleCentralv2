@@ -19,10 +19,6 @@
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <span>Average High Score Catches: {{ pattern.avgHighScoreCatch }}</span>
-      <v-spacer></v-spacer>
-      <span>Average High Score Time: {{ pattern.avgHighScoreTime }}</span>
-      <v-spacer></v-spacer>
       <span>{{ description }}</span>
       <v-spacer></v-spacer>
       <div class="text-right white--text mt-5" style="width: 100%;">
