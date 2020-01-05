@@ -39,8 +39,27 @@ export default {
       error(err)
     }
   },
+  mounted() {
+    this.scroll()
+  },
   methods: {
-    async update() {
+    scroll() {
+      window.onscroll = () => {
+        const bottomOfWindow =
+          Math.max(
+            window.pageYOffset,
+            document.documentElement.scrollTop,
+            document.body.scrollTop
+          ) +
+            window.innerHeight ===
+          document.documentElement.offsetHeight
+
+        if (bottomOfWindow) {
+          this.loadMore()
+        }
+      }
+    },
+    async loadMore() {
       this.counter++
       this.feed = await this.$axios.$get(
         `/feed?limit=${this.itemsPerCount * this.counter}`

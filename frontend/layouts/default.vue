@@ -10,7 +10,8 @@
           :to="item.to"
           text
         >
-          <v-icon left>{{ item.icon }}</v-icon> {{ item.title }}
+          <v-icon left>{{ item.icon }}</v-icon>
+          {{ item.title }}
         </v-btn>
       </v-toolbar-items>
       <v-col cols="2">
