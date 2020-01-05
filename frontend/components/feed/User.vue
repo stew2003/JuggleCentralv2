@@ -50,7 +50,6 @@ export default {
       if (!this.user.bio || this.user.bio.length < 75) {
         return this.user.bio
       }
-
       return `${this.user.bio.slice(0, 75)}...`
     }
   }

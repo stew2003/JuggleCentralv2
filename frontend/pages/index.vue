@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row v-for="(item, i) in feed" :key="i" justify="center">
+    <v-row v-for="item in feed" :key="key(item)" justify="center">
       <v-col cols="12" md="7">
         <User v-if="item.isNewUserActivity" :user="item" />
         <JugglePattern v-if="item.isNewPatternActivity" :pattern="item" />
@@ -57,6 +57,19 @@ export default {
         if (bottomOfWindow) {
           this.loadMore()
         }
+      }
+    },
+    key(item, index) {
+      if (item.isNewUserActivity) {
+        return `user-${item.uid}`
+      }
+
+      if (item.isNewPatternActivity) {
+        return `pattern-${item.uid}`
+      }
+
+      if (item.isPBActivity) {
+        return `record-${item.uid}`
       }
     },
     async loadMore() {
