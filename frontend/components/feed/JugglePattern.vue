@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="title font-weight-light text-truncate mr-10">
+      <span class="title text-truncate mr-10">
         <nuxt-link :to="`/pattern/${pattern.uid}`" class="name">
           {{ pattern.name }}
         </nuxt-link>

@@ -9,6 +9,7 @@ module.exports = {
     try {
       const user = await pool.query(
         `SELECT
+          uid,
           timeCreated,
           name,
           bio,
@@ -34,6 +35,7 @@ module.exports = {
     try {
       const users = await pool.query(
         `SELECT
+          uid,
           timeCreated,
           name,
           bio,
@@ -93,6 +95,7 @@ module.exports = {
     try {
       return await pool.query(
         `SELECT
+          uid,
           timeCreated,
           name,
           bio,
@@ -116,6 +119,7 @@ module.exports = {
       // order users by time created to get most recent
       return await pool.query(
         `SELECT
+          uid,
           timeCreated,
           name,
           bio,
@@ -161,6 +165,7 @@ module.exports = {
       const newUser = await pool.query(
         `INSERT INTO users (timeCreated, userRank, name, email, isAdmin) VALUES (NOW(), ?, ?, ?, ?);
         SELECT
+          uid,
           timeCreated,
           name,
           bio,
