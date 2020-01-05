@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row v-for="item in leaderboard" :key="key(item)" justify="center">
-      <v-col cols="12" md="7">
+      <v-col cols="12" md="7" class="py-1">
         <User :user="item" />
       </v-col>
     </v-row>
