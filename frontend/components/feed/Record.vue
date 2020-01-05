@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: 'Jugglerecord',
+  name: 'Record',
   props: {
     record: {
       type: Object,
