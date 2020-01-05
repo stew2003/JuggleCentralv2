@@ -19,7 +19,7 @@
         </span>
         <span class="grey--text text--lighten-1 mx-2">|</span>
         <span class="headline font-weight-bold teal--text text--accent-2">
-          {{ user.score }}
+          {{ user.prettyScore }}
         </span>
         <span class="subtitle-2 ml-3">Score</span>
       </div>

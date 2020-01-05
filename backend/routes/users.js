@@ -1,4 +1,5 @@
 const express = require('express')
+const commaNumber = require('comma-number')
 
 const { validate } = require('../middleware/validator')
 const schemas = require('../validation_schemas/users')
@@ -28,7 +29,14 @@ router.get('/user', validate('query', schemas.get), async (req, res, next) => {
 // handle request to get ther user leaderboards
 router.get('/users/leaderboard', async (req, res, next) => {
   try {
-    res.send(await usersController.getLeaderboard())
+    const users = await usersController.getLeaderboard()
+
+    res.send(
+      users.map((u) => {
+        u.prettyScore = commaNumber(u.score)
+        return u
+      })
+    )
   } catch (err) {
     next(err)
   }

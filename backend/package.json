@@ -24,6 +24,7 @@
   "dependencies": {
     "@hapi/joi": "^16.1.8",
     "body-parser": "^1.19.0",
+    "comma-number": "^2.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
