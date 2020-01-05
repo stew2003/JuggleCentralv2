@@ -2,28 +2,49 @@
   <v-card>
     <v-card-title>
       <span class="title text-truncate mr-10">
-        <nuxt-link :to="`/pattern/${pattern.uid}`" class="name">
+        <nuxt-link
+          :to="`/pattern/${pattern.uid}`"
+          class="name pink--text text--accent-2"
+        >
           {{ pattern.name }}
         </nuxt-link>
         was created
       </span>
       <v-spacer></v-spacer>
       <div>
-        <span class="subtitle-2">
-          Number of Objects : {{ pattern.numObjects }}
+        <span class="subtitle-2 mr-3">
+          Objects
         </span>
-        <span class="subtitle-2 ml-5">
-          Difficulty: {{ pattern.difficulty }}
+        <span class="headline font-weight-bold pink--text text--accent-2">
+          {{ pattern.numObjects }}
         </span>
+        <span class="grey--text text--lighten-1 mx-2">|</span>
+        <span class="headline font-weight-bold pink--text text--accent-2">
+          {{ pattern.difficulty }}
+        </span>
+        <span class="subtitle-2 pink--text text--accent-2">/ 10</span>
+        <span class="subtitle-2 ml-3">Difficulty</span>
       </div>
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <span>{{ description }}</span>
-      <v-spacer></v-spacer>
-      <div class="text-right white--text mt-5" style="width: 100%;">
-        {{ pattern.relativeTime }}
-      </div>
+      <v-row align="center" justify="center">
+        <v-col cols="3">
+          <v-card v-if="pattern.GIF" class="pa-3">
+            <v-img :src="pattern.GIF"></v-img>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <span>{{ description }}</span>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="text-right grey--text mt-5">
+          {{ pattern.relativeTime }}
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -52,5 +73,8 @@ export default {
 <style scoped>
 .name {
   text-decoration: none !important;
+}
+.name:hover {
+  color: #ff80ab !important;
 }
 </style>
