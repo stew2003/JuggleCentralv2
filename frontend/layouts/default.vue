@@ -25,6 +25,10 @@
           dense
         ></v-text-field>
       </v-col>
+      <v-toolbar-items>
+        <v-btn v-if="$auth.loggedIn" @click="logout" text>Logout</v-btn>
+        <v-btn v-else @click="login" text>Login</v-btn>
+      </v-toolbar-items>
     </v-app-bar>
     <v-content>
       <nuxt />
@@ -50,6 +54,19 @@ export default {
         }
       ],
       query: ''
+    }
+  },
+  methods: {
+    async login() {
+      try {
+        await this.$auth.loginWith('google')
+      } catch (err) {
+        this.$nuxt.error(err)
+      }
+    },
+    async logout() {
+      await this.$auth.logout()
+      this.$router.push('/')
     }
   }
 }

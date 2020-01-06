@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+require('dotenv').config()
 
 export default {
   mode: 'universal',
@@ -46,7 +47,9 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    // Auth module
+    '@nuxtjs/auth'
   ],
   /*
    ** Axios module configuration
@@ -54,7 +57,23 @@ export default {
    */
   axios: {
     baseURL: 'http://api:8080',
-    browserBaseURL: 'http://localhost/api'
+    browserBaseURL: 'http://localhost/api',
+    credentials: true
+  },
+  /*
+   ** Auth module configuration
+   */
+  auth: {
+    strategies: {
+      google: {
+        client_id: process.env.GOOGLE_CLIENT_ID
+      }
+    },
+    redirect: {
+      login: '/verify',
+      callback: '/verify',
+      home: '/verify'
+    }
   },
   /*
    ** vuetify module configuration

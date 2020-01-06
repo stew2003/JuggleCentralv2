@@ -9,6 +9,7 @@ const patternRoutes = require('./routes/patterns')
 const recordRoutes = require('./routes/records')
 const searchRoutes = require('./routes/search')
 const feedRoutes = require('./routes/feed')
+const verifyRoute = require('./routes/verify')
 
 app.use(cors())
 
@@ -22,6 +23,7 @@ app.use('/', patternRoutes)
 app.use('/', recordRoutes)
 app.use('/', searchRoutes)
 app.use('/', feedRoutes)
+app.use('/', verifyRoute)
 
 // create an error middleware!
 // eslint-disable-next-line no-unused-vars

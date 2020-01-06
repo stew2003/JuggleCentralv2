@@ -90,6 +90,30 @@ module.exports = {
     }
   },
 
+  // get whether an user exists by their token
+  getByToken: async (token) => {
+    try {
+      const user = await pool.query('SELECT uid FROM users WHERE token = ?;', [
+        token
+      ])
+      return user.length > 0
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // get the uid and whether a user exists by email
+  getByEmail: async (email) => {
+    try {
+      const user = await pool.query('SELECT uid FROM users WHERE email = ?;', [
+        email
+      ])
+      return { exists: user.length > 0, user: user[0] ? user[0].uid : null }
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
   // get all users, ordered by rank
   getLeaderboard: async () => {
     try {
@@ -209,6 +233,20 @@ module.exports = {
         isAdmin,
         uid
       ])
+      return
+    } catch (err) {
+      throw new Errors.InternalServerError(err.message)
+    }
+  },
+
+  // sets the token of a user by their UID
+  setToken: async (uid, token) => {
+    try {
+      await pool.query('UPDATE users SET token = ? WHERE uid = ?;', [
+        token,
+        uid
+      ])
+      return
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }

@@ -8,6 +8,7 @@ CREATE TABLE users (
 	isAdmin TINYINT(1) DEFAULT 0,
 	score INT DEFAULT 0,			-- holistic measure of user's juggling skill
 	userRank INT,					-- user's position in the leaderboard sorted / pooled by user score
+  token VARCHAR(255),
 	PRIMARY KEY (uid)
 ) ENGINE=MyISAM;
 

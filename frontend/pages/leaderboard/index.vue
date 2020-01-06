@@ -15,6 +15,7 @@ export default {
   components: {
     User
   },
+  middleware: ['auth', 'verify'],
   async asyncData({ app, error }) {
     try {
       const leaderboard = await app.$axios.$get('/users/leaderboard')
