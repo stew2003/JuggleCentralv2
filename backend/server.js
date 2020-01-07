@@ -32,6 +32,6 @@ app.use((err, req, res, next) => {
 
 app.listen(process.env.PORT, process.env.HOST, () => {
   console.log(
-    `Backend api for JuggleCentral listening on ${process.env.HOST}:${process.env.PORT}`
+    `Backend API for JuggleCentral listening on ${process.env.HOST}:${process.env.PORT}`
   )
 })

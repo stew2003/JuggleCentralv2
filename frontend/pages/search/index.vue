@@ -5,6 +5,7 @@
         <v-row align="center" justify="center">
           <v-col cols="8">
             <v-text-field
+              ref="searchQuery"
               v-on:keyup.enter="search()"
               v-model="query"
               placeholder="Search"
@@ -18,13 +19,15 @@
         </v-row>
         <v-row align="center" justify="space-around">
           <v-col cols="4">
-            <v-radio-group v-model="isPattern" row>
+            <v-radio-group v-model="isPattern" @change="search()" row>
               <v-radio :value="false" label="Search Users"></v-radio>
               <v-radio :value="true" label="Search Patterns"></v-radio>
             </v-radio-group>
           </v-col>
           <v-col cols="4" align="center">
             <v-select
+              v-if="isPattern"
+              @change="search()"
               v-model="numObjects"
               :items="allNumObjects"
               item-value="numObjects"
@@ -45,6 +48,7 @@
           <v-col cols="4" align="center">
             <v-select
               v-model="orderBy"
+              @change="search()"
               :items="possibleOrderBy"
               item-value="scary"
               item-text="friendly"
@@ -77,11 +81,17 @@
             </v-col>
           </v-row>
         </template>
-        <v-row v-if="results.users">
-          <v-list-item v-for="user in results.users" :key="`user-${user.uid}`">
-            {{ pattern }}
-          </v-list-item>
-        </v-row>
+        <template v-if="results.users">
+          <v-row
+            v-for="user in results.users"
+            :key="`user-${user.uid}`"
+            justify="center"
+          >
+            <v-col cols="12" md="12">
+              <UserResult :user="user"></UserResult>
+            </v-col>
+          </v-row>
+        </template>
       </v-card>
     </v-row>
   </v-container>
@@ -89,10 +99,12 @@
 
 <script>
 import PatternResult from '@/components/search/PatternResult.vue'
+import UserResult from '@/components/search/UserResult.vue'
 
 export default {
   components: {
-    PatternResult
+    PatternResult,
+    UserResult
   },
   data() {
     return {
@@ -134,6 +146,10 @@ export default {
       error(err)
     }
   },
+  // search when page loaded
+  async beforeMount() {
+    await this.search()
+  },
   methods: {
     async search() {
       try {
@@ -146,8 +162,6 @@ export default {
               limit: this.limit
             }
           })
-          // eslint-disable-next-line no-console
-          console.log(this.results)
           return
         }
         this.results = await this.$axios.$get('/search/users', {

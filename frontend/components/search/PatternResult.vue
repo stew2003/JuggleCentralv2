@@ -35,6 +35,11 @@
           <span>{{ description }}</span>
         </v-col>
       </v-row>
+      <v-row class="mb-0">
+        <v-col class="text-right grey--text mt-5 pb-0">
+          {{ pattern.numUsers }} participants
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
