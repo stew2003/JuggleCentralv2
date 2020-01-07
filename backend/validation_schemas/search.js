@@ -31,7 +31,7 @@ module.exports = {
       numObjects: Joi.number()
         .integer()
         .min(1)
-        .when('orderBy', { is: 'NUM_OBJECTS', then: Joi.required() }),
+        .allow(null),
       limit: Joi.number()
         .integer()
         .min(1)
