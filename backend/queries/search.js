@@ -63,7 +63,7 @@ module.exports = {
 
       // count how many results for this query exist under patterns (with NO limit and count flag ON)
       const patterns = await module.exports.searchPatterns({ query }, true)
-      return { users, numPatternResult: patterns.patterns.length }
+      return { users, numPatternResults: patterns.patterns.length }
     } catch (err) {
       throw new Errors.InternalServerError(err.message)
     }

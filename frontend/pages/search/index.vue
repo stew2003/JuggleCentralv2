@@ -20,8 +20,14 @@
         <v-row align="center" justify="space-around">
           <v-col cols="4">
             <v-radio-group v-model="isPattern" @change="search()" row>
-              <v-radio :value="false" label="Search Users"></v-radio>
-              <v-radio :value="true" label="Search Patterns"></v-radio>
+              <v-radio
+                :value="false"
+                :label="`Search Users ${userCount}`"
+              ></v-radio>
+              <v-radio
+                :value="true"
+                :label="`Search Patterns ${patternCount}`"
+              ></v-radio>
             </v-radio-group>
           </v-col>
           <v-col cols="4" align="center">
@@ -133,6 +139,30 @@ export default {
         { scary: 'RELEVANCE', friendly: 'Relevance' },
         { scary: 'RANK', friendly: 'Rank' }
       ]
+    },
+    // compute how many pattern search results exist
+    patternCount() {
+      if (this.results.patterns) {
+        return `(${this.results.patterns.length})`
+      }
+
+      if (this.results.numPatternResults >= 0) {
+        return `(${this.results.numPatternResults})`
+      }
+
+      return ''
+    },
+    // compute how many user search results exist
+    userCount() {
+      if (this.results.users) {
+        return `(${this.results.users.length})`
+      }
+
+      if (this.results.numUserResults >= 0) {
+        return `(${this.results.numUserResults})`
+      }
+
+      return ''
     }
   },
   async asyncData({ app, error }) {
