@@ -32,9 +32,8 @@
               ></v-radio>
             </v-radio-group>
           </v-col>
-          <v-col cols="6" md="4" align="center">
+          <v-col v-if="isPattern" cols="6" md="4" align="center">
             <v-select
-              v-if="isPattern"
               @change="search()"
               v-model="numObjects"
               :items="allNumObjects"
