@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DEV_DATABASE}
       MYSQL_ROOT_PASSWORD: ${MYSQL_DEV_ROOT_PASSWORD}
     ports:
-      - 3306:3306
+      - 5401:3306
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
