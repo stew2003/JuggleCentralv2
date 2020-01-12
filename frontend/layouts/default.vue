@@ -17,7 +17,8 @@
       <v-col cols="2">
         <v-text-field
           v-model="query"
-          placeholder="search"
+          v-on:keyup.enter="search()"
+          placeholder="Search"
           prepend-inner-icon="mdi-magnify"
           hide-details
           single-line
@@ -51,6 +52,31 @@ export default {
       ],
       query: ''
     }
+  },
+  methods: {
+    async search() {
+      try {
+        await this.$store.dispatch('search/get_results', {
+          query: this.query,
+          orderBy: 'RELEVANCE',
+          limit: 200,
+          isPattern: true
+        })
+        this.query = ''
+        this.$router.push('/search')
+        return
+      } catch (err) {
+        this.$nuxt.error(err)
+      }
+    }
   }
 }
 </script>
+
+<style lang="scss">
+.v-application,
+.v-application .title,
+.v-application .headline {
+  font-family: $body-font-family, sans-serif !important;
+}
+</style>
