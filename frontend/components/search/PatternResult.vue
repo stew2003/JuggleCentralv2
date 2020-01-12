@@ -27,7 +27,7 @@
     </v-card-title>
     <v-divider></v-divider>
     <v-card-text>
-      <v-row v-if="pattern.GIF" align="center" justify="left">
+      <v-row v-if="pattern.GIF" align="center" justify="start">
         <div class="pl-3">
           <v-img :src="pattern.GIF" width="70px"></v-img>
         </div>

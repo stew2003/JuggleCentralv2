@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-card width="70%" class="pa-5">
         <v-row align="center" justify="center">
-          <v-col cols="8">
+          <v-col cols="12" sm="8">
             <v-text-field
               ref="searchQuery"
               v-on:keyup.enter="search()"
@@ -18,13 +18,21 @@
           </v-col>
         </v-row>
         <v-row align="center" justify="space-around">
-          <v-col cols="4">
+          <v-col cols="12" md="4">
             <v-radio-group v-model="isPattern" @change="search()" row>
-              <v-radio :value="false" label="Search Users"></v-radio>
-              <v-radio :value="true" label="Search Patterns"></v-radio>
+              <v-radio
+                :value="false"
+                color="teal accent-2"
+                label="Search Users"
+              ></v-radio>
+              <v-radio
+                :value="true"
+                color="pink accent-2"
+                label="Search Patterns"
+              ></v-radio>
             </v-radio-group>
           </v-col>
-          <v-col cols="4" align="center">
+          <v-col cols="6" md="4" align="center">
             <v-select
               v-if="isPattern"
               @change="search()"
@@ -45,7 +53,7 @@
               </template>
             </v-select>
           </v-col>
-          <v-col cols="4" align="center">
+          <v-col cols="6" md="4" align="center">
             <v-select
               v-model="orderBy"
               @change="search()"
