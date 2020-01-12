@@ -115,12 +115,9 @@ export default {
   },
   data() {
     return {
-      isPattern: true,
-      query: '',
       orderBy: 'RELEVANCE',
       numObjects: null,
-      limit: 50,
-      results: []
+      limit: 200
     }
   },
   computed: {
@@ -164,6 +161,25 @@ export default {
       }
 
       return ''
+    },
+    results() {
+      return this.$store.state.search.results
+    },
+    query: {
+      get() {
+        return this.$store.state.search.query
+      },
+      set(val) {
+        this.$store.commit('search/SET_QUERY', val)
+      }
+    },
+    isPattern: {
+      get() {
+        return this.$store.state.search.isPattern
+      },
+      set(val) {
+        this.$store.commit('search/SET_ISPATTERN', val)
+      }
     }
   },
   async asyncData({ app, error }) {
@@ -179,28 +195,22 @@ export default {
   },
   // search when page loaded
   async beforeMount() {
-    await this.search()
+    if (!this.$store.state.search.searched) {
+      await this.search()
+    }
+  },
+  beforeDestroy() {
+    this.$store.commit('search/SET_SEARCHED', false)
   },
   methods: {
     async search() {
       try {
-        if (this.isPattern) {
-          this.results = await this.$axios.$get('/search/patterns', {
-            params: {
-              query: this.query,
-              orderBy: this.orderBy,
-              numObjects: this.numObjects,
-              limit: this.limit
-            }
-          })
-          return
-        }
-        this.results = await this.$axios.$get('/search/users', {
-          params: {
-            query: this.query,
-            orderBy: this.orderBy,
-            limit: this.limit
-          }
+        await this.$store.dispatch('search/get_results', {
+          query: this.query,
+          orderBy: this.orderBy,
+          numObjects: this.numObjects,
+          limit: this.limit,
+          isPattern: this.isPattern
         })
         return
       } catch (err) {
