@@ -3,3 +3,13 @@
 ---------------- Things to do ----------------
 
 - test auth; then merge onto master
+
+Pages to make:
+  - admin page (add/remove user accounts, add/remove patterns)
+    - edit pattern form
+    - add pattern form
+    - edit user form
+    - add user form
+  - pattern view page
+  - user view page
+  - add record form component (goes on user AND pattern page)
