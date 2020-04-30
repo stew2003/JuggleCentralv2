@@ -40,7 +40,7 @@ export default {
       title: 'JuggleCentral',
       items: [
         {
-          icon: 'mdi-file-document-box-search-outline',
+          icon: 'mdi-text-box-search-outline',
           title: 'Browse Patterns',
           to: '/search'
         },
