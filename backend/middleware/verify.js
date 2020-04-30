@@ -5,12 +5,12 @@ const Errors = require('../utils/errors')
 
 // verify the authentication token sent in the header
 module.exports = async (req, res, next) => {
-  console.log('Trying to authenticate')
   let token
   try {
-    console.log(req.headers)
-
     // isolate the token
+    if (!req.headers.authorization) {
+      throw new Error('You are not logged in!')
+    }
     token = req.headers.authorization.replace('Bearer ', '')
 
     // try and find an admin who has logged in with this token before

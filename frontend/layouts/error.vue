@@ -31,7 +31,7 @@ export default {
   data() {
     return {
       pageNotFound: '404 Not Found',
-      otherError: this.error
+      otherError: this.error.message
     }
   }
 }
